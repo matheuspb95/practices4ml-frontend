@@ -85,7 +85,7 @@ const InputField = (props) => {
             reverse={true}
             size="small"
             placeholder={props.placeholder}
-            {...props}
+            disabled={props.disabled}
           />
         )}
         id={props.name}
