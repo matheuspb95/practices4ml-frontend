@@ -1,24 +1,16 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { Box, Text, Button, Heading, Layer } from "grommet";
+import { MailOption, Lock } from "grommet-icons";
 import { useHistory } from "react-router-dom";
-import { User, MailOption, Lock } from "grommet-icons";
 import api from "../api";
 import FormCard from "../components/FormCard";
-import Link from "../components/Link";
 
 const fields = [
-  {
-    name: "name",
-    messageError: "Name not valid",
-    placeholder: "Full Name",
-    regex: /([a-zA-Z]+\s*)+/g,
-    icon: User,
-  },
   {
     name: "email",
     messageError: "Email not valid",
     placeholder: "Email",
-    regex: /^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)*(\.\w+)+$/g,
+    regex: /^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/g,
     icon: MailOption,
   },
   {
@@ -30,44 +22,54 @@ const fields = [
     regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&.*])(?=.{8,})/g,
     icon: Lock,
   },
-  {
-    name: "confirm-password",
-    messageError: "Password not valid",
-    placeholder: "Confirm Password",
-    type: "password",
-    regex: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&.*])(?=.{8,})/g,
-    icon: Lock,
-  },
 ];
 
-const Register = () => {
+const Login = () => {
   const history = useHistory();
-  const goLogin = () => {
-    history.push("/login");
-  };
-  const refAgree = useRef();
-
+  const refRemenber = useRef();
   const [errors, setErrors] = useState([]);
   const [success, setSuccess] = useState(false);
 
+  const signIn = useCallback(
+    async (credentials) => {
+      const bodyFormData = new FormData();
+      bodyFormData.append("username", credentials.email);
+      bodyFormData.append("password", credentials.password);
+      try {
+        const { data } = await api.post("/users/login", bodyFormData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        const { access_token: token } = data;
+        const { email } = credentials;
+        const user = {
+          email,
+        };
+        if (token) {
+          setSuccess(true);
+          setTimeout(() => {
+            history.push("/profile");
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(user));
+          }, 500);
+        }
+      } catch (e) {
+        setErrors(["User not found"]);
+      }
+    },
+    [history]
+  );
+
   const submit = async ({ value }) => {
     fields.forEach((field) => {
-      console.log(field.name);
-      console.log(value[field.name]);
       if (!field.regex.test(value[field.name])) {
         errors.push(field.messageError);
       }
     });
-    if (!refAgree.current.checked) {
-      errors.push("Agree with the terms and conditions");
-    }
-    if (value["password"] !== value["confirm-password"]) {
-      errors.push("Passwords doesnt match");
-    }
+
     setErrors([...errors]);
     if (errors.length === 0) {
       try {
-        await api.post("/users", value);
+        signIn(value);
         setSuccess(true);
       } catch (e) {
         errors.push("Network Error", e);
@@ -85,23 +87,26 @@ const Register = () => {
     >
       <FormCard
         onSubmit={submit}
-        confirmLabel="Register"
-        subTitle="Register a new membership"
+        confirmLabel="Sign In"
+        subTitle="Sign in to start your session"
         fields={fields}
         checkboxes={[
           {
-            ref: refAgree,
+            ref: refRemenber,
             child: (
               <Text size="20" weight="bold">
-                I agree to the <Link label="terms" />
+                Remember Me
               </Text>
             ),
           },
         ]}
         links={[
           {
-            label: "I already have a membership",
-            click: goLogin,
+            label: "I forgot my password",
+          },
+          {
+            label: "Register a new membership",
+            click: () => history.push("/register"),
           },
         ]}
       />
@@ -117,11 +122,10 @@ const Register = () => {
         </Layer>
       )}
       {success && (
-        <Layer onEsc={goLogin} onClickOutside={goLogin}>
+        <Layer>
           <Box pad="medium">
             <Heading color="status-ok">SUCCESS</Heading>
-            <Text>Do login to continue</Text>
-            <Button label="close" onClick={goLogin} />
+            <Text>Loading Page</Text>
           </Box>
         </Layer>
       )}
@@ -129,4 +133,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;

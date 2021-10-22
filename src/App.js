@@ -20,6 +20,14 @@ const theme = {
       height: "20px",
     },
   },
+  formField: {
+    info: {
+      size: "xsmall",
+    },
+    error: {
+      size: "xsmall",
+    },
+  },
 };
 
 

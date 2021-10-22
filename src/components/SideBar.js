@@ -15,19 +15,27 @@ const SearchBar = (props) => {
 }
 
 const SideBar = () => {
-  return <Sidebar background="brand" pad="small">
-            <Nav gap="small" width="250px">
-              <SideBarButton label="SEPractices4ML">
-                <Text size="20px" weight="bolder" color="dark-2">SE</Text>
-              </SideBarButton>
-              <Box border="bottom" />
-              <SideBarButton label="User Name">
-                <User color="dark-1" />                  
-              </SideBarButton>
-              <Box border="bottom" />
-              <SearchBar />
-            </Nav>
-          </Sidebar>
+  return (
+    <Sidebar
+      style={{  }}
+      background="brand"
+      pad="small"
+    >
+      <Nav gap="small" width="250px">
+        <SideBarButton label="SEPractices4ML">
+          <Text size="20px" weight="bolder" color="dark-2">
+            SE
+          </Text>
+        </SideBarButton>
+        <Box border="bottom" />
+        <SideBarButton label="User Name">
+          <User color="dark-1" />
+        </SideBarButton>
+        <Box border="bottom" />
+        <SearchBar />
+      </Nav>
+    </Sidebar>
+  );
 }
 
 export default SideBar;
