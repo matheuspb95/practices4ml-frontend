@@ -40,9 +40,9 @@ const SelectField = (props) => {
   };
 
   return (
-    <Box direction="row">
+    <Box direction={props.direction || "row"}>
       <Text
-        margin={{ top: "small" }}
+        margin={{ vertical: "small" }}
         size="14px"
         color="dark-1"
         weight="bold"

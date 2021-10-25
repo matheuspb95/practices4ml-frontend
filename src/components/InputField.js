@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text, TextInput, FormField, Tip } from "grommet";
+import { Box, Text, TextInput, FormField, Tip, TextArea } from "grommet";
 
 const InputField = (props) => {
   const icon = (
@@ -62,10 +62,10 @@ const InputField = (props) => {
     );
   }
   return (
-    <Box direction="row">
+    <Box direction={props.labelDirection || "row"}>
       {props.label && (
         <Text
-          margin={{ top: "small" }}
+          margin={{ vertical: "small" }}
           size="14px"
           color="dark-1"
           weight="bold"
@@ -76,18 +76,32 @@ const InputField = (props) => {
       )}
       <FormField
         contentProps={{ border: false, width: "medium" }}
-        component={() => (
-          <TextInput
-            type={props.type}
-            name={props.name}
-            id={props.name}
-            icon={icon}
-            reverse={true}
-            size="small"
-            placeholder={props.placeholder}
-            disabled={props.disabled}
-          />
-        )}
+        component={() => {
+          if (props.textArea)
+            return (
+              <TextArea
+                type={props.type}
+                name={props.name}
+                id={props.name}
+                icon={icon}
+                reverse={true}
+                placeholder={props.placeholder}
+                disabled={props.disabled}
+              />
+            );
+          return (
+            <TextInput
+              type={props.type}
+              name={props.name}
+              id={props.name}
+              icon={icon}
+              reverse={true}
+              size="small"
+              placeholder={props.placeholder}
+              disabled={props.disabled}
+            />
+          );
+        }}
         id={props.name}
         htmlFor={props.name}
         {...props}

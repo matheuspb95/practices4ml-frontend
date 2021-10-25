@@ -6,10 +6,16 @@ const HeaderButton = (props) => {
   if (props.icon) {
     Icon = <props.icon size='20' />
   }
-    return <Button margin='small' icon={Icon || undefined} label={props.label} plain color='dark-3'
-    onClick={() => {
-      props.onClick()
-    }} />
+    return (
+      <Button
+        margin="small"
+        icon={Icon || undefined}
+        label={props.label}
+        plain
+        color="dark-3"
+        onClick={props.onClick}
+      />
+    );
 }
 
 const Header = (props) => {
