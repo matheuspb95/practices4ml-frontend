@@ -1,9 +1,10 @@
 import React, { useState, useRef, useCallback } from "react";
-import { Box, Text, Button, Heading, Layer } from "grommet";
+import { Box, Text } from "grommet";
 import { MailOption, Lock } from "grommet-icons";
 import { useHistory } from "react-router-dom";
 import api from "../api";
 import FormCard from "../components/FormCard";
+import AlertModal from "../components/AlertModal";
 
 const fields = [
   {
@@ -23,6 +24,7 @@ const fields = [
     icon: Lock,
   },
 ];
+
 
 const Login = () => {
   const history = useHistory();
@@ -110,25 +112,12 @@ const Login = () => {
           },
         ]}
       />
-      {errors.length > 0 && (
-        <Layer onEsc={() => setErrors([])} onClickOutside={() => setErrors([])}>
-          <Box pad="medium">
-            <Heading color="status-error">ERRORS</Heading>
-            {errors.map((error) => {
-              return <Text>{error}</Text>;
-            })}
-            <Button label="close" onClick={() => setErrors([])} />
-          </Box>
-        </Layer>
-      )}
-      {success && (
-        <Layer>
-          <Box pad="medium">
-            <Heading color="status-ok">SUCCESS</Heading>
-            <Text>Loading Page</Text>
-          </Box>
-        </Layer>
-      )}
+      <AlertModal
+        errors={errors}
+        setErrors={setErrors}
+        success={success}
+        sucessText="LOADING PAGE"
+      />
     </Box>
   );
 };

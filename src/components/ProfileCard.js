@@ -125,12 +125,18 @@ const ProfileCard = (props) => {
                 const fileList = event.target.files;
                 for (let i = 0; i < fileList.length; i += 1) {
                   const file = fileList[i];
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    props.setUserData({ photo: reader.result });
-                    setShowUpload(false);
-                  };
-                  reader.readAsDataURL(file);
+                  if (
+                    file.type === "image/jpeg" ||
+                    file.type === "image/jpg" ||
+                    file.type === "image/png"
+                  ) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      props.setUserData({ photo: reader.result });
+                      setShowUpload(false);
+                    };
+                    reader.readAsDataURL(file);
+                  }
                 }
               }}
             />

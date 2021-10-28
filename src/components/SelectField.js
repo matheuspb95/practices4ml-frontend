@@ -1,15 +1,10 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Text,
-  FormField,
-  Select,
-} from "grommet";
+import { Box, Text, FormField, Select } from "grommet";
 
 const SelectField = (props) => {
   const SelectFilter = (props) => {
-    const [options, setOptions] = useState(props.options);
     const [value, setValue] = useState([]);
+    const [options, setOptions] = useState(props.options);
 
     const search = () => {
       if (props.searchable) {
@@ -42,7 +37,7 @@ const SelectField = (props) => {
   return (
     <Box direction={props.direction || "row"}>
       <Text
-        margin={{ vertical: "small" }}
+        margin={{ vertical: "xsmall" }}
         size="14px"
         color="dark-1"
         weight="bold"
@@ -53,7 +48,7 @@ const SelectField = (props) => {
       <FormField
         info={props.info}
         name={props.name}
-        contentProps={{ border: false, width: "medium" }}
+        contentProps={{ border: false }}
         component={() => <SelectFilter {...props} />}
       />
     </Box>

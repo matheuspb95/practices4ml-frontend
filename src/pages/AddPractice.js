@@ -1,118 +1,59 @@
-import React, { useState } from "react";
-import { Box, Text, Card, CardBody, CardHeader, Form } from "grommet";
-import { FormAdd, FormSubtract } from "grommet-icons";
+import React, { useEffect, useState } from "react";
+import { Box, Text, Form } from "grommet";
+import { useHistory } from "react-router-dom";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
-import InputField from "../components/InputField";
-import SelectField from "../components/SelectField";
-
-const organizationTypeOpt = [
-  { value: "large_company", label: "Large company" },
-  { value: "small_company", label: "Small Company/Startup" },
-  { value: "academic", label: "Lab case/Academic" },
-  { value: "other", label: "Other" },
-  { value: "unknown", label: "Unknown" },
-];
-
-const devProccessOpt = [
-  { value: "research_based", label: "Research-based" },
-  { value: "ad_hoc", label: "Ad-hoc" },
-  { value: "agile", label: "Agile" },
-  { value: "iterative", label: "Iterative" },
-  { value: "waterfall", label: "Waterfall" },
-  { value: "mix", label: "Mix" },
-  { value: "other", label: "Other" },
-  { value: "unknown", label: "Unknown" },
-];
-
-const contextOpt = [
-  { value: "in_house", label: "In-house" },
-  { value: "outsource", label: "Outsource" },
-  { value: "other", label: "Other" },
-  { value: "unkwon", label: "Unknown" },
-];
-
-const GeneralForm = (props) => {
-  return (
-    <Box>
-      <Form onSubmit={() => {}}>
-        <InputField
-          labelDirection="column"
-          name="name"
-          label="Practice Name"
-          info="Its a required field."
-        />
-        <InputField
-          textArea
-          labelDirection="column"
-          label="Practice Description"
-          info="Its a required field."
-        />
-        <Text
-          color="black"
-          size="16px"
-          weight="bold"
-          style={{ textDecoration: "underline" }}
-        >
-          Inform the context in which the practice was developed
-        </Text>
-        <Box margin={{ vertical: "small" }}>
-          <SelectField
-            direction="column"
-            required
-            options={organizationTypeOpt}
-            name="organization-type"
-            label="Organization Types"
-            placeholder="Select One"
-            info="Its a required field."
-          />
-          <SelectField
-            direction="column"
-            required
-            options={devProccessOpt}
-            name="dev-process"
-            label="Development Process"
-            placeholder="Select One"
-            info="Its a required field."
-          />
-          <SelectField
-            direction="column"
-            required
-            options={contextOpt}
-            name="context"
-            label="Context"
-            placeholder="Select One"
-            info="Its a required field."
-          />
-        </Box>
-      </Form>
-    </Box>
-  );
-};
-
-const CardMinimize = (props) => {
-  const [open, setOpen] = useState(true);
-  return (
-    <Box fill="horizontal">
-      <Card round="xsmall" background="light-1">
-        <CardHeader
-          onClick={() => setOpen(!open)}
-          justify="between"
-          height="xxsmall"
-          background="#17a2b8"
-          pad="small"
-        >
-          {props.header}
-          {open ? <FormSubtract /> : <FormAdd />}
-        </CardHeader>
-        {open && props.body && <CardBody pad="medium">{props.body}</CardBody>}
-      </Card>
-    </Box>
-  );
-};
+import ConfirmButton from "../components/ConfirmButton";
+import OrganizationForm from "../components/OrganizationForm";
+import GeneralForm from "../components/GeneralForm";
+import ChallengesForm from "../components/ChallengesForm";
+import CardMinimize from "../components/CardMinimize";
+import AdditionalInfo from "../components/AditionalInfoForm";
+import api from "../api";
+import AlertModal from "../components/AlertModal";
 
 const AddPractice = () => {
   const [showSidebar, setShowSidebar] = useState(true);
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({});
+  const [errors, setErrors] = useState([]);
+  const [success, setSuccess] = useState(false);
+  const history = useHistory();
+
+  useEffect(() => {
+    if (step === 3) {
+      formData["context"] = formData["context"]["label"];
+      formData["contribution_type"] = formData["contribution_type"]["label"];
+      formData["data_source"] = formData["data_source"]["label"];
+      formData["development_process"] = formData["dev_process"]["label"];
+      formData["organization_type"] = formData["organization_type"]["label"];
+      console.log(formData);
+
+      const postData = async (form) => {
+        const token = localStorage.getItem("token");
+
+        try {
+          const res = await api.post("/practices", form, {
+            headers: {
+              accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (res.status === 200) {
+            setSuccess(true);
+            setTimeout(() => {
+              history.push("/");
+            }, 500);
+          }
+        } catch (e) {
+          setStep(1)
+          setErrors([e.toString()])
+          console.log(e);
+        }
+      };
+      postData(formData);
+    }
+  }, [step, formData, history]);
 
   return (
     <Box direction="row">
@@ -121,12 +62,77 @@ const AddPractice = () => {
         <Header changeSideBarState={() => setShowSidebar(!showSidebar)} />
         <Box gap="medium" pad="small" fill background="light-3">
           <Text size="22px">Practice Add</Text>
-          <Box direction="row" gap="small">
-            <CardMinimize header="General" body={<GeneralForm />} />
-            <CardMinimize header="Organization context of the AI/ML system development" />
-          </Box>
+          {step === 1 && (
+            <Form
+              onSubmit={(evt) => {
+                setFormData({ ...formData, ...evt.value });
+                setStep(2);
+              }}
+            >
+              <Box>
+                <Box direction="row" gap="small">
+                  <CardMinimize header="General" body={<GeneralForm />} />
+                  <CardMinimize
+                    header="Organization context of the AI/ML system development"
+                    body={<OrganizationForm />}
+                  />
+                </Box>
+                <Box
+                  pad={{ vertical: "medium" }}
+                  direction="row"
+                  justify="between"
+                >
+                  <ConfirmButton
+                    color="dark-3"
+                    label="Cancel"
+                    onClick={() => {
+                      setStep(1);
+                    }}
+                  />
+                  <ConfirmButton color="neutral-1" label="Next" type="submit" />
+                </Box>
+              </Box>
+            </Form>
+          )}
+          {step === 2 && (
+            <Form
+              onSubmit={(evt) => {
+                setStep(3);
+                setFormData({ ...formData, ...evt.value });
+              }}
+            >
+              <Box>
+                <Box direction="row" gap="small">
+                  <CardMinimize
+                    header="Challenges and SE knowledge areas"
+                    body={<ChallengesForm />}
+                  />
+                  <CardMinimize
+                    headerColor="dark-3"
+                    header="Additional information"
+                    body={<AdditionalInfo />}
+                  />
+                </Box>
+                <Box
+                  pad={{ vertical: "medium" }}
+                  direction="row"
+                  justify="between"
+                >
+                  <ConfirmButton
+                    color="dark-3"
+                    label="Previous"
+                    onClick={() => {
+                      setStep(1);
+                    }}
+                  />
+                  <ConfirmButton color="neutral-1" label="Save" type="submit" />
+                </Box>
+              </Box>
+            </Form>
+          )}
         </Box>
       </Box>
+      <AlertModal errors={errors} setErrors={setErrors} success={success} successText="PRACTICE SAVED" />
     </Box>
   );
 };

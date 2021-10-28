@@ -50,7 +50,14 @@ const FormCard = (props) => {
           style={{ width: "-webkit-fill-available" }}
         >
           {props.fields.map((f) => {
-            return <InputField key={f.name} id={f.name} {...f} />;
+            return (
+              <InputField
+                style={{ minWidth: "100%" }}
+                key={f.name}
+                id={f.name}
+                {...f}
+              />
+            );
           })}
           <Box justify="between" direction="row" align="center">
             {props.checkboxes.map((checkbox, i) => {
@@ -65,7 +72,9 @@ const FormCard = (props) => {
           </Box>
         </Form>
         {props.links.map((link, i) => {
-            return <Link key={`link-${i}`} click={link.click} label={link.label} />;
+          return (
+            <Link key={`link-${i}`} click={link.click} label={link.label} />
+          );
         })}
       </CardBody>
     </Card>

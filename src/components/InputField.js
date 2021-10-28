@@ -14,11 +14,11 @@ const InputField = (props) => {
             top: "50%",
             transform: "translateY(-50%)",
             pointerEvents: "none",
-            right: "-10px",
+            right: "-6px",
             borderRadius: "0px 3px 3px 0px",
             borderLeft: "1px solid grey",
             backgroundColor: "#e9ecef",
-            padding: "10px",
+            padding: "6px",
           }}
         >
           {<props.icon size="18px" color="dark-1" />}
@@ -41,6 +41,7 @@ const InputField = (props) => {
           contentProps={{ border: false }}
           component={() => (
             <TextInput
+              {...props}
               value={props.value}
               label={props.label}
               type={props.type}
@@ -65,7 +66,7 @@ const InputField = (props) => {
     <Box direction={props.labelDirection || "row"}>
       {props.label && (
         <Text
-          margin={{ vertical: "small" }}
+          margin={{ vertical: "xsmall" }}
           size="14px"
           color="dark-1"
           weight="bold"
@@ -75,7 +76,7 @@ const InputField = (props) => {
         </Text>
       )}
       <FormField
-        contentProps={{ border: false, width: "medium" }}
+        contentProps={{ border: false }}
         component={() => {
           if (props.textArea)
             return (
@@ -91,6 +92,9 @@ const InputField = (props) => {
             );
           return (
             <TextInput
+              {...props}
+              value={props.value}
+              label={props.label}
               type={props.type}
               name={props.name}
               id={props.name}
@@ -98,7 +102,6 @@ const InputField = (props) => {
               reverse={true}
               size="small"
               placeholder={props.placeholder}
-              disabled={props.disabled}
             />
           );
         }}

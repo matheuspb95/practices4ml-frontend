@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback } from "react";
-import { Avatar, Box, Sidebar, Nav, Text, TextInput, Menu } from "grommet";
+import React, { useState } from "react";
+import { Avatar, Box, Sidebar, Nav, Text, TextInput } from "grommet";
 import {
   Search,
   User,
