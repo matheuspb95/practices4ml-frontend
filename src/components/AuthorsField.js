@@ -27,7 +27,6 @@ const AuthorsField = () => {
               authorsSuggestion.unshift(...data);
               authorsSuggestion.push({
                 author_name: input + " (Add new)",
-                user_id: "",
               });
               setAuthorsSuggestion([...authorsSuggestion]);
             } catch (e) {
