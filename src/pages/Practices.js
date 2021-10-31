@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Box, DataTable, Text, Avatar, Button } from "grommet";
-import { Edit, Folder } from "grommet-icons";
+import {
+  Box,
+  DataTable,
+  Text,
+  Avatar,
+  Button,
+  Pagination,
+  Footer,
+  TextInput,
+} from "grommet";
+import { Edit, Folder, Search } from "grommet-icons";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
 import api from "../api";
+import InputField from "../components/InputField";
 
 const nameField = (props) => {
   return (
@@ -73,6 +83,8 @@ const buttonsField = (props) => {
 const Practices = (props) => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [listData, setListData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -80,18 +92,23 @@ const Practices = (props) => {
       try {
         const { data } = await api.get("/practices", {
           params: {
-            limit: 5
+            limit: 0,
           },
           headers: {
             accept: "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
-        setListData(data);
-        console.log(data);
+        setListData(
+          data.map((d, i) => {
+            return { ...d, key: i };
+          })
+        );
       } catch (e) {}
     })();
   }, []);
+
+  console.log(search);
 
   const headerProps = {
     color: "black",
@@ -106,53 +123,91 @@ const Practices = (props) => {
         <Header changeSideBarState={() => setShowSidebar(!showSidebar)} />
         <Box pad="small" fill background="light-3">
           <Text size="22px">All SE Practices</Text>
-          <DataTable
-            background={{
-              header: { color: "light-1", opacity: "strong" },
-              body: ["light-1", "light-3"],
-              footer: { color: "dark-3", opacity: "strong" },
-            }}
-            columns={[
-              {
-                property: "#",
-                header: <Text>#</Text>,
-                render: () => <Text size="14px">#</Text>,
-              },
-              {
-                property: "name",
-                header: <Text {...headerProps}>Practice Name</Text>,
-                render: nameField,
-              },
-              {
-                property: "authors",
-                header: <Text {...headerProps}>Authors</Text>,
-                render: authorsField,
-              },
-              {
-                property: "contribution_type",
-                header: <Text {...headerProps}>Contribution Types</Text>,
-                render: (pract) => {
-                  return <Text size="12px">{pract.contribution_type}</Text>;
-                },
-              },
-              {
-                property: "swebok",
-                header: <Text {...headerProps}>Knowledge Areas</Text>,
-                render: areasField,
-              },
-              {
-                property: "buttons",
-                render: buttonsField,
-              },
-            ]}
-            border={{
-              color: "light-4",
-              side: "horizontal",
-              size: "xsmall",
-            }}
-            data={listData}
-          />
+          <Box background="light-1">
+            <Box margin="small">
+              <Text margin={{ vertical: "xsmall" }} size="16px">
+                Practices
+              </Text>
+              <TextInput
+                onChange={(evt) => setSearch(evt.target.value)}
+                placeholder="type practice name here"
+                reverse
+                icon={<Search />}
+              />
+            </Box>
+            <Box>
+              {listData.length > 0 && (
+                <DataTable
+                  margin={{ top: "small" }}
+                  background={{
+                    header: { color: "light-1", opacity: "strong" },
+                    body: ["light-1", "light-3"],
+                    footer: { color: "dark-3", opacity: "strong" },
+                  }}
+                  columns={[
+                    {
+                      property: "#",
+                      header: <Text>#</Text>,
+                      render: () => <Text size="14px">#</Text>,
+                    },
+                    {
+                      property: "name",
+                      header: <Text {...headerProps}>Practice Name</Text>,
+                      render: nameField,
+                    },
+                    {
+                      property: "authors",
+                      header: <Text {...headerProps}>Authors</Text>,
+                      render: authorsField,
+                    },
+                    {
+                      property: "contribution_type",
+                      header: <Text {...headerProps}>Contribution Types</Text>,
+                      render: (pract) => {
+                        return (
+                          <Text size="12px">{pract.contribution_type}</Text>
+                        );
+                      },
+                    },
+                    {
+                      property: "swebok",
+                      header: <Text {...headerProps}>Knowledge Areas</Text>,
+                      render: areasField,
+                    },
+                    {
+                      property: "buttons",
+                      render: buttonsField,
+                    },
+                  ]}
+                  border={{
+                    color: "light-4",
+                    side: "horizontal",
+                    size: "xsmall",
+                  }}
+                  data={listData
+                    .filter((d) =>
+                      d.name.toLowerCase().includes(search.toLowerCase())
+                    )
+                    .slice((page - 1) * 5, page * 5)}
+                />
+              )}
+            </Box>
+          </Box>
         </Box>
+        <Footer justify="center">
+          <Pagination
+            numberMiddlePages={6}
+            margin="small"
+            onChange={({ page }) => setPage(page)}
+            size="small"
+            step={5}
+            numberItems={
+              listData.filter((d) =>
+                d.name.toLowerCase().includes(search.toLowerCase())
+              ).length
+            }
+          />
+        </Footer>
       </Box>
     </Box>
   );

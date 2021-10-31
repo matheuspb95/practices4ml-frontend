@@ -1,5 +1,6 @@
 import React from "react";
 import { Grommet } from "grommet";
+import { FormNextLink, FormPreviousLink } from "grommet-icons";
 import { normalizeColor } from "grommet/utils";
 
 import Routes from "./routes/Routes";
@@ -19,6 +20,32 @@ const theme = {
       family: "Roboto",
       size: "14px",
       height: "20px",
+    },
+  },
+  pagination: {
+    button: {
+      color: "neutral-3",
+      background: {
+        color: "white",
+      },
+      active: {
+        background: {
+          color: "neutral-3",
+        },
+        color: "white",
+      },
+      hover: {
+        background: {
+          color: "active-1",
+        },
+      },
+    },
+    controls: {
+      gap: "xxsmall",
+    },
+    icons: {
+      next: FormNextLink,
+      previous: FormPreviousLink,
     },
   },
   fileInput: {
