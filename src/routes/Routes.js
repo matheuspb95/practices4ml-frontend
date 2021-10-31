@@ -7,6 +7,7 @@ import Register from "../pages/Register";
 import Login from "../pages/Login";
 import Profile from "../pages/Profile";
 import AddPractice from "../pages/AddPractice";
+import Practices from "../pages/Practices";
 
 
 const Routes = () => {
@@ -27,6 +28,9 @@ const Routes = () => {
         </Route>
         <Route path="/add-practice" exact>
           <AddPractice />
+        </Route>
+        <Route path="/practices" exact>
+          <Practices />
         </Route>
       </Switch>
     </Router>
