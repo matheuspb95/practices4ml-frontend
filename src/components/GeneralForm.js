@@ -31,14 +31,18 @@ const GeneralForm = (props) => {
   return (
     <Box>
       <InputField
-        required
+        defaultValue={props.data.name || ""}
+        placeholder="Name of the practice"
+        required={!props.data.name}
         labelDirection="column"
         name="name"
         label="Practice Name"
         info="Its a required field."
       />
       <InputField
-        required
+        defaultValue={props.data.description}
+        placeholder="Description"
+        required={!props.data.description}
         textArea
         name="description"
         labelDirection="column"
@@ -55,30 +59,33 @@ const GeneralForm = (props) => {
       </Text>
       <Box margin={{ vertical: "small" }}>
         <SelectField
+          defaultValue={props.data.organization_type}
           direction="column"
-          required
+          required={!props.data.organization_type}
           options={organizationTypeOpt}
           name="organization_type"
           label="Organization Types"
-          placeholder="Select One"
+          placeholder={props.data.organization_type || "Select One..."}
           info="Its a required field."
         />
         <SelectField
+          defaultValue={props.data.development_process}
           direction="column"
-          required
+          required={!props.data.development_process}
           options={devProccessOpt}
-          name="dev_process"
+          name="development_process"
           label="Development Process"
-          placeholder="Select One"
+          placeholder={props.data.development_process || "Select One..."}
           info="Its a required field."
         />
         <SelectField
+          defaultValue={props.data.context}
           direction="column"
-          required
+          required={!props.data.context}
           options={contextOpt}
           name="context"
           label="Context"
-          placeholder="Select One"
+          placeholder={props.data.context || "Select One..."}
           info="Its a required field."
         />
       </Box>

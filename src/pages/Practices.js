@@ -13,7 +13,7 @@ import { Edit, Folder, Search } from "grommet-icons";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
 import api from "../api";
-import InputField from "../components/InputField";
+import { useHistory } from "react-router-dom";
 
 const nameField = (props) => {
   return (
@@ -50,32 +50,8 @@ const areasField = (props) => {
   return (
     <Box alignSelf="center" pad="xxsmall" background="neutral-1" round="xsmall">
       <Text textAlign="center" size="12px" weight="bold">
-        {props.swebok.join(", ")}
+        {props.swebok ? props.swebok.join(", ") : ""}
       </Text>
-    </Box>
-  );
-};
-
-const buttonsField = (props) => {
-  return (
-    <Box direction="row" gap="small">
-      <Button
-        size="small"
-        width="20px"
-        style={{ borderRadius: "4px" }}
-        primary
-        color="neutral-3"
-        label="View"
-        icon={<Folder size="14px" />}
-      />
-      <Button
-        size="small"
-        style={{ borderRadius: "4px" }}
-        primary
-        color="accent-3"
-        label="Edit"
-        icon={<Edit size="14px" />}
-      />
     </Box>
   );
 };
@@ -85,6 +61,7 @@ const Practices = (props) => {
   const [listData, setListData] = useState([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const history = useHistory();
 
   useEffect(() => {
     (async () => {
@@ -107,8 +84,6 @@ const Practices = (props) => {
       } catch (e) {}
     })();
   }, []);
-
-  console.log(search);
 
   const headerProps = {
     color: "black",
@@ -176,7 +151,32 @@ const Practices = (props) => {
                     },
                     {
                       property: "buttons",
-                      render: buttonsField,
+                      render: (pract) => {
+                        return (
+                          <Box direction="row" gap="small">
+                            <Button
+                              size="small"
+                              width="20px"
+                              style={{ borderRadius: "4px" }}
+                              primary
+                              color="neutral-3"
+                              label="View"
+                              icon={<Folder size="14px" />}
+                            />
+                            <Button
+                              size="small"
+                              style={{ borderRadius: "4px" }}
+                              primary
+                              color="accent-3"
+                              label="Edit"
+                              icon={<Edit size="14px" />}
+                              onClick={() => {
+                                history.push("/update-practice", pract);
+                              }}
+                            />
+                          </Box>
+                        );
+                      },
                     },
                   ]}
                   border={{

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Text, Form } from "grommet";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
 import ConfirmButton from "../components/ConfirmButton";
@@ -13,9 +13,10 @@ import api from "../api";
 import AlertModal from "../components/AlertModal";
 
 const AddPractice = () => {
+  let location = useLocation();
   const [showSidebar, setShowSidebar] = useState(true);
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState(location.state || {});
   const [errors, setErrors] = useState([]);
   const [success, setSuccess] = useState(false);
   const history = useHistory();
@@ -25,30 +26,53 @@ const AddPractice = () => {
       formData["context"] = formData["context"]["label"];
       formData["contribution_type"] = formData["contribution_type"]["label"];
       formData["data_source"] = formData["data_source"]["label"];
-      formData["development_process"] = formData["dev_process"]["label"];
+      formData["development_process"] =
+        formData["development_process"]["label"];
       formData["organization_type"] = formData["organization_type"]["label"];
-      console.log(formData);
 
       const postData = async (form) => {
         const token = localStorage.getItem("token");
-
-        try {
-          const res = await api.post("/practices", form, {
-            headers: {
-              accept: "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (res.status === 200) {
-            setSuccess(true);
-            setTimeout(() => {
-              history.push("/");
-            }, 500);
+        if (formData.id) {
+          try {
+            const res = await api.put("/practices", form, {
+              params: {
+                practice_id: formData.id,
+              },
+              headers: {
+                accept: "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            if (res.status === 200) {
+              setSuccess(true);
+              setTimeout(() => {
+                history.push("/");
+              }, 500);
+            }
+          } catch (e) {
+            setStep(1);
+            setErrors([e.toString()]);
+            console.log(e);
           }
-        } catch (e) {
-          setStep(1)
-          setErrors([e.toString()])
-          console.log(e);
+        } else {
+          try {
+            const res = await api.post("/practices", form, {
+              headers: {
+                accept: "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            if (res.status === 200) {
+              setSuccess(true);
+              setTimeout(() => {
+                history.push("/");
+              }, 500);
+            }
+          } catch (e) {
+            setStep(1);
+            setErrors([e.toString()]);
+            console.log(e);
+          }
         }
       };
       postData(formData);
@@ -71,10 +95,13 @@ const AddPractice = () => {
             >
               <Box>
                 <Box direction="row" gap="small">
-                  <CardMinimize header="General" body={<GeneralForm />} />
+                  <CardMinimize
+                    header="General"
+                    body={<GeneralForm data={formData} />}
+                  />
                   <CardMinimize
                     header="Organization context of the AI/ML system development"
-                    body={<OrganizationForm />}
+                    body={<OrganizationForm data={formData} />}
                   />
                 </Box>
                 <Box
@@ -105,12 +132,12 @@ const AddPractice = () => {
                 <Box direction="row" gap="small">
                   <CardMinimize
                     header="Challenges and SE knowledge areas"
-                    body={<ChallengesForm />}
+                    body={<ChallengesForm data={formData} />}
                   />
                   <CardMinimize
                     headerColor="dark-3"
                     header="Additional information"
-                    body={<AdditionalInfo />}
+                    body={<AdditionalInfo data={formData} />}
                   />
                 </Box>
                 <Box
@@ -132,7 +159,12 @@ const AddPractice = () => {
           )}
         </Box>
       </Box>
-      <AlertModal errors={errors} setErrors={setErrors} success={success} successText="PRACTICE SAVED" />
+      <AlertModal
+        errors={errors}
+        setErrors={setErrors}
+        success={success}
+        successText="PRACTICE SAVED"
+      />
     </Box>
   );
 };

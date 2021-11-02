@@ -3,8 +3,8 @@ import { Box, Text, List, TextInput, FormField } from "grommet";
 import { FormClose } from "grommet-icons";
 import api from "../api";
 
-const AuthorsField = () => {
-  const [authors, setAuthors] = useState([]);
+const AuthorsField = (props) => {
+  const [authors, setAuthors] = useState(props.data.authors || []);
   const [authorsSuggestion, setAuthorsSuggestion] = useState([]);
 
   return (

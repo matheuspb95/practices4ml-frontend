@@ -81,6 +81,7 @@ const InputField = (props) => {
           if (props.textArea)
             return (
               <TextArea
+                {...props}
                 type={props.type}
                 name={props.name}
                 id={props.name}

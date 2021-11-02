@@ -29,6 +29,9 @@ const Routes = () => {
         <Route path="/add-practice" exact>
           <AddPractice />
         </Route>
+        <Route path="/update-practice" exact>
+          <AddPractice />
+        </Route>
         <Route path="/practices" exact>
           <Practices />
         </Route>

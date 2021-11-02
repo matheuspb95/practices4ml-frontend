@@ -46,6 +46,7 @@ const SelectField = (props) => {
         {props.label}
       </Text>
       <FormField
+        {...props}
         info={props.info}
         name={props.name}
         contentProps={{ border: false }}

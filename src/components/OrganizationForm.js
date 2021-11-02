@@ -28,23 +28,23 @@ const OrganizationForm = (props) => {
     <Box margin={{ vertical: "small" }}>
       <SelectField
         direction="column"
-        required
+        required={!props.data.data_source}
         options={dataSourceOpt}
         name="data_source"
         label="Data Source"
-        placeholder="Select One"
+        placeholder={props.data.data_source || "Select One..."}
         info="Its a required field."
       />
       <SelectField
         direction="column"
-        required
+        required={!props.data.contribution_type}
         options={contributionOpt}
         name="contribution_type"
         label="Contribution Type"
-        placeholder="Select One"
+        placeholder={props.data.contribution_type || "Select One..."}
         info="Its a required field."
       />
-      <AuthorsField />
+      <AuthorsField data={props.data} />
     </Box>
   );
 };

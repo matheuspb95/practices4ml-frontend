@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Box, Text, CheckBoxGroup, FormField } from "grommet";
 
 const challengesOpt = [
@@ -30,8 +31,11 @@ const areasOpt = [
 ];
 
 const CheckBoxGroupField = (props) => {
+  const [value, setValue] = useState(props.defaultValue || []);
+
   return (
     <FormField
+      {...props}
       name={props.name}
       contentProps={{ border: false, pad: "0px" }}
       label={
@@ -46,6 +50,8 @@ const CheckBoxGroupField = (props) => {
       }
       component={() => (
         <CheckBoxGroup
+          value={value}
+          onChange={({ value }) => setValue(value)}
           required
           gap="xxsmall"
           style={{ maxHeight: "180px", flexFlow: "column wrap" }}
@@ -62,11 +68,13 @@ const ChallengesForm = (props) => {
   return (
     <Box margin="xxxsmall">
       <CheckBoxGroupField
+        defaultValue={props.data.challenges}
         name="challenges"
         label="Select the challenges that your practices proposes to minimize"
         options={challengesOpt}
       />
       <CheckBoxGroupField
+        defaultValue={props.data.swebok}
         name="swebok"
         label="Select the SWEBOK Knowledge areas that your practice meets"
         options={areasOpt}

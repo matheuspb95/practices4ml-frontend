@@ -4,7 +4,7 @@ import InputField from "./InputField";
 import { FormClose } from "grommet-icons";
 
 const UploadFiles = (props) => {
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState(props.files || []);
   return (
     <Box>
       <Text
@@ -88,23 +88,26 @@ const UploadFiles = (props) => {
 const AdditionalInfo = (props) => {
   return (
     <Box margin="xxxsmall">
-      <UploadFiles />
+      <UploadFiles files={props.data.files} />
       <InputField
-        required
+        defaultValue={props.data.reference}
+        required={!props.data.reference}
         labelDirection="column"
         name="reference"
         label="Reference"
         info="Its a required field."
       />
       <InputField
-        required
+        defaultValue={props.data.link}
+        required={!props.data.link}
         labelDirection="column"
         name="link"
         label="Link"
         info="Its a required field."
       />
       <InputField
-        required
+        defaultValue={props.data.doi}
+        required={!props.data.doi}
         labelDirection="column"
         name="doi"
         label="DOI"
