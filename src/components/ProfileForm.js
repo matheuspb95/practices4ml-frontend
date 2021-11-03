@@ -83,8 +83,7 @@ const ProfileForm = (props) => {
           { label: "Academic", value: "academic" },
           {
             label: "Industry Software (Startup/ Small /Large Company)",
-            value: "industry",
-            fill: true,
+            value: "industry"
           },
         ]}
       />
@@ -122,6 +121,7 @@ const ProfileForm = (props) => {
       >
         <Form onSubmit={submitData}>
           <InputField
+            defaultValue={props.userData.name}
             name="name"
             label="Name"
             placeholder={props.userData.name || "Name"}
@@ -134,17 +134,14 @@ const ProfileForm = (props) => {
             placeholder={props.userData.email || "Email"}
             info="Your email appears on your Profile page and will use as your login. It is a required field."
           />
-          <FormField
-            name="work"
-            contentProps={{ border: false, width: "medium" }}
-          >
+          <FormField name="work" contentProps={{ border: false }}>
             <Box direction="row">
               <Text
                 margin={{ top: "small" }}
                 size="14px"
                 color="dark-1"
                 weight="bold"
-                style={{ minWidth: "150px" }}
+                style={{ minWidth: "156px" }}
               >
                 Currently work?
               </Text>
@@ -152,26 +149,28 @@ const ProfileForm = (props) => {
             </Box>
           </FormField>
           <InputField
+            defaultValue={props.userData.organization}
             name="organization"
             label="Organization*"
             placeholder={props.userData.organization || "Your organization"}
             info="Your Organization appears on your Profile page. It is a required field."
           />
           <InputField
+            defaultValue={props.userData.occupation}
             name="occupation"
             label="Occupation*"
             placeholder={props.userData.occupation || "Your Role"}
             info="Your Occupation appears on your Profile page. It is a required field."
           />
           <SelectField
-            required
+            required={!props.userData.degree}
             options={degreeOpt}
             name="degree"
             label="Degree*"
             placeholder={props.userData.degree || "Select One..."}
           />
           <SelectField
-            required
+            required={!props.userData.areas}
             options={areaOpt}
             multiple
             searchable
@@ -184,7 +183,7 @@ const ProfileForm = (props) => {
             }
             info="You can add more than one interest area. It is a required field"
           />
-          <Box gap="medium" margin={{ left: "150px" }}>
+          <Box gap="medium" margin={{ left: "156px" }}>
             <Box align="center" gap="xsmall" direction="row">
               <CheckBox name="reviewer" />
               <Text size="20" weight="bold">

@@ -70,12 +70,13 @@ const InputField = (props) => {
           size="14px"
           color="dark-1"
           weight="bold"
-          style={{ width: "150px" }}
+          style={{ width: "200px" }}
         >
           {props.label}
         </Text>
       )}
       <FormField
+        style={{ width: "-webkit-fill-available" }}
         contentProps={{ border: false }}
         component={() => {
           if (props.textArea)

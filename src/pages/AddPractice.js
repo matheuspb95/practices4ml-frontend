@@ -46,7 +46,7 @@ const AddPractice = () => {
             if (res.status === 200) {
               setSuccess(true);
               setTimeout(() => {
-                history.push("/");
+                history.push("/practices");
               }, 500);
             }
           } catch (e) {

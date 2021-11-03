@@ -12,6 +12,7 @@ import {
 import { Edit, Folder, Search } from "grommet-icons";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
+import AlertModal from "../components/AlertModal";
 import api from "../api";
 import { useHistory } from "react-router-dom";
 
@@ -61,6 +62,7 @@ const Practices = (props) => {
   const [listData, setListData] = useState([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [errors, setErrors] = useState([]);
   const history = useHistory();
 
   useEffect(() => {
@@ -81,7 +83,12 @@ const Practices = (props) => {
             return { ...d, key: i };
           })
         );
-      } catch (e) {}
+      } catch (e) {
+        setErrors(["Error on token validation, do login"]);
+        setTimeout(() => {
+          history.push("/login");
+        }, 1000);
+      }
     })();
   }, []);
 
@@ -104,7 +111,10 @@ const Practices = (props) => {
                 Practices
               </Text>
               <TextInput
-                onChange={(evt) => setSearch(evt.target.value)}
+                onChange={(evt) => {
+                  setPage(1);
+                  setSearch(evt.target.value);
+                }}
                 placeholder="type practice name here"
                 reverse
                 icon={<Search />}
@@ -163,17 +173,19 @@ const Practices = (props) => {
                               label="View"
                               icon={<Folder size="14px" />}
                             />
-                            <Button
-                              size="small"
-                              style={{ borderRadius: "4px" }}
-                              primary
-                              color="accent-3"
-                              label="Edit"
-                              icon={<Edit size="14px" />}
-                              onClick={() => {
-                                history.push("/update-practice", pract);
-                              }}
-                            />
+                            {pract.editable && (
+                              <Button
+                                size="small"
+                                style={{ borderRadius: "4px" }}
+                                primary
+                                color="accent-3"
+                                label="Edit"
+                                icon={<Edit size="14px" />}
+                                onClick={() => {
+                                  history.push("/update-practice", pract);
+                                }}
+                              />
+                            )}
                           </Box>
                         );
                       },
@@ -209,6 +221,7 @@ const Practices = (props) => {
           />
         </Footer>
       </Box>
+      <AlertModal errors={errors} />
     </Box>
   );
 };

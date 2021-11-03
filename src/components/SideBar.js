@@ -13,6 +13,7 @@ import { useHistory } from "react-router-dom";
 const SideBarButton = (props) => {
   return (
     <Box
+      onClick={props.onClick}
       pad={{ horizontal: "small" }}
       direction="row"
       align="center"
@@ -97,17 +98,25 @@ const SideBar = () => {
           </Text>
         </SideBarButton>
         <Box border="bottom" />
-        <SideBarButton label="User Name">
+        <SideBarButton
+          onClick={() => history.push("/profile")}
+          label="User Name"
+        >
           <User color="dark-1" />
         </SideBarButton>
         <Box border="bottom" />
         <SearchBar />
         <DropDownMenu
           label="My Practices"
-          options={[{
-            label: "Add New", onClick: () => {
-            history.push('/add-practice');
-          } }, { label: "Submitted" }]}
+          options={[
+            {
+              label: "Add New",
+              onClick: () => {
+                history.push("/add-practice");
+              },
+            },
+            { label: "Submitted" },
+          ]}
         />
       </Nav>
     </Sidebar>

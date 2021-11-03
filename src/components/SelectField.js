@@ -41,16 +41,18 @@ const SelectField = (props) => {
         size="14px"
         color="dark-1"
         weight="bold"
-        style={{ width: "150px" }}
+        style={{ width: "200px" }}
       >
         {props.label}
       </Text>
       <FormField
         {...props}
+        style={{ width: "-webkit-fill-available" }}
         info={props.info}
         name={props.name}
         contentProps={{ border: false }}
         component={() => <SelectFilter {...props} />}
+        label=""
       />
     </Box>
   );
