@@ -8,6 +8,7 @@ import Login from "../pages/Login";
 import Profile from "../pages/Profile";
 import AddPractice from "../pages/AddPractice";
 import Practices from "../pages/Practices";
+import ViewPractice from '../pages/ViewPractice';
 
 
 const Routes = () => {
@@ -34,6 +35,9 @@ const Routes = () => {
         </Route>
         <Route path="/practices" exact>
           <Practices />
+        </Route>
+        <Route path="/view-practice" exact>
+          <ViewPractice />
         </Route>
       </Switch>
     </Router>
