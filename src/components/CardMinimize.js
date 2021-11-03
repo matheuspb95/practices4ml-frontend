@@ -17,7 +17,7 @@ const CardMinimize = (props) => {
           {props.header}
           {open ? <FormSubtract /> : <FormAdd />}
         </CardHeader>
-        {open && props.body && <CardBody pad="medium">{props.body}</CardBody>}
+        {open && props.body && <CardBody pad={props.pad || "medium"}>{props.body}</CardBody>}
       </Card>
     </Box>
   );
