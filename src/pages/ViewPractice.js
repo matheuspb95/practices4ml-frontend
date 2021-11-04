@@ -106,7 +106,7 @@ const PracticeInfo = (props) => {
           ]}
           pad={{ vertical: "small" }}
         >
-          <Text size="16px">Organizational Context</Text>
+          <Text size="18px">Organizational Context</Text>
           <Text size="14px">
             Organizational Type: {props.organization_type}
           </Text>
@@ -127,7 +127,7 @@ const PracticeInfo = (props) => {
           ]}
           pad={{ vertical: "small" }}
         >
-          <Text size="16px">Challenges</Text>
+          <Text size="18px">Challenges</Text>
           <Text size="14px">{props.challenges.join(", ")}</Text>
         </Box>
         <Box
@@ -141,8 +141,8 @@ const PracticeInfo = (props) => {
           ]}
           pad={{ vertical: "small" }}
         >
-          <Text size="16px">Additional Information Practice</Text>
-          <Text size="14px">Information...</Text>
+          <Text size="18px">SE Knowledge Areas</Text>
+          <Text size="14px">{props.swebok.join(",")}</Text>
         </Box>
         <Box
           direction="row"
@@ -248,22 +248,22 @@ const PracticeInfo = (props) => {
         <Box>
           <Text>Practices Files</Text>
           {props.files.map((file) => (
-            <Box
-              direction="row"
-              align="center"
-              gap="xxsmall"
-            >
-              {file.filedata.split(";", 1)[0] === "data:image/png" && (
-                <Image size="14px" />
-              )}
-              {file.filedata.split(";", 1)[0] === "data:image/jpeg" && (
-                <Image size="14px" />
-              )}
-              {file.filedata.split(";", 1)[0] === "data:application/pdf" && (
-                <DocumentPdf size="14px" />
-              )}
-              {file.filename}
-            </Box>
+            <a href={file.filedata} download={file.filename}>
+              <Box direction="row" align="center" gap="xxsmall">
+                {file.filedata.split(";", 1)[0] === "data:image/png" && (
+                  <Image size="14px" />
+                )}
+                {file.filedata.split(";", 1)[0] === "data:image/jpeg" && (
+                  <Image size="14px" />
+                )}
+                {file.filedata.split(";", 1)[0] === "data:application/pdf" && (
+                  <DocumentPdf size="14px" />
+                )}
+                <Text color="dark-1" size="14px">
+                  {file.filename}
+                </Text>
+              </Box>
+            </a>
           ))}
         </Box>
         <Box />
