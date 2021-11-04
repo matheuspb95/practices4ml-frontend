@@ -90,7 +90,7 @@ const Practices = (props) => {
         }, 1000);
       }
     })();
-  }, []);
+  }, [history]);
 
   const headerProps = {
     color: "black",
@@ -172,6 +172,9 @@ const Practices = (props) => {
                               color="neutral-3"
                               label="View"
                               icon={<Folder size="14px" />}
+                              onClick={() => {
+                                history.push("/view-practice", pract.id);
+                              }}
                             />
                             {pract.editable && (
                               <Button

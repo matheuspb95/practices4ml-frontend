@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -16,10 +16,10 @@ import CardMinimize from "../components/CardMinimize";
 import { Brush, DocumentPdf, Image, Like, ChatOption } from "grommet-icons";
 import ConfirmButton from "../components/ConfirmButton";
 import { useHistory, useLocation } from "react-router-dom";
+import api from "../api";
 
 const PracticeInfo = (props) => {
   const cardPad = { vertical: "xsmall", horizontal: "small" };
-
   const LikeBtn = (props) => {
     const [selected, setSelected] = useState(false);
 
@@ -58,33 +58,26 @@ const PracticeInfo = (props) => {
   const LeftContent = () => {
     return (
       <Box margin="0px" width="large">
-        <Box height="100px" fill="horizontal" gap="small" direction="row">
+        <Box height="70px" fill="horizontal" gap="small" direction="row">
           {[
-            { label: "Likes", count: "41,100", percentage: "70%" },
-            { label: "Views", count: "41,100", percentage: "70%" },
-            { label: "Comments", count: "41,100", percentage: "70%" },
+            {
+              label: "Likes",
+              count: props.likes,
+            },
+            {
+              label: "Views",
+              count: props.views,
+            },
+            {
+              label: "Comments",
+              count: props.comments.length,
+            },
           ].map((data) => (
             <Card fill="horizontal" background="light-2">
               <CardHeader pad={cardPad}>{data.label}</CardHeader>
               <CardBody pad={cardPad}>
                 <Text weight="bold">{data.count}</Text>
               </CardBody>
-              <CardFooter pad={cardPad}>
-                <Box
-                  width="medium"
-                  direction="row"
-                  border={[
-                    {
-                      color: "dark-5",
-                      size: "small",
-                      style: "solid",
-                      side: "top",
-                    },
-                  ]}
-                >
-                  <Text>{data.percentage}</Text>
-                </Box>
-              </CardFooter>
             </Card>
           ))}
         </Box>
@@ -100,12 +93,7 @@ const PracticeInfo = (props) => {
           pad={{ vertical: "small" }}
         >
           <Text weight="bold">Details of the Practice</Text>
-          <Text size="14px">
-            Details of the Practice Details of the Practice Details of the
-            Practice Details of the Practice Details of the Practice Details of
-            the Practice Details of the Practice Details of the Practice Details
-            of the Practice Details of the Practice Details of the Practice
-          </Text>
+          <Text size="14px">{props.description}</Text>
         </Box>
         <Box
           border={[
@@ -119,10 +107,14 @@ const PracticeInfo = (props) => {
           pad={{ vertical: "small" }}
         >
           <Text size="16px">Organizational Context</Text>
-          <Text size="14px">Organizational Type: Small</Text>
-          <Text size="14px">Development Process: Research-Based</Text>
-          <Text size="14px">Context: In-house</Text>
-          <Text size="14px">Data Source: Private</Text>
+          <Text size="14px">
+            Organizational Type: {props.organization_type}
+          </Text>
+          <Text size="14px">
+            Development Process: {props.development_process}
+          </Text>
+          <Text size="14px">Context: {props.context}</Text>
+          <Text size="14px">Data Source: {props.data_source}</Text>
         </Box>
         <Box
           border={[
@@ -136,7 +128,7 @@ const PracticeInfo = (props) => {
           pad={{ vertical: "small" }}
         >
           <Text size="16px">Challenges</Text>
-          <Text size="14px">Requirements, Design, Process</Text>
+          <Text size="14px">{props.challenges.join(", ")}</Text>
         </Box>
         <Box
           border={[
@@ -168,35 +160,13 @@ const PracticeInfo = (props) => {
           <LikeBtn />
           <Box align="center" gap="xsmall" direction="row">
             <ChatOption size="18px" />
-            Comments (2)
+            Comments ({props.comments.length})
           </Box>
         </Box>
         <Box margin={{ top: "medium" }}>
           <Text>Comments Recents</Text>
           <Box pad="small" background="light-3">
-            {[
-              {
-                responses: [
-                  {
-                    author: {
-                      name: "Eliza",
-                      photo: "",
-                    },
-                    comment: "I like it too",
-                    likes: 1,
-                    date: Date.now(),
-                  },
-                ],
-                comment:
-                  "#DOTA2 HERO GUIDES UPDATED TO PATCH 7.30e! 128+ guides have been reviewed and revised Corneta de festaCorneta de festaCorneta de festa",
-                date: "2021/10/10 08:08:08",
-                author: {
-                  name: "MATHEUS PALHETA",
-                  photo:
-                    "https://pbs.twimg.com/profile_images/1440750487850995713/w_C14VpC_400x400.jpg",
-                },
-              },
-            ].map((data) => (
+            {props.comments.map((data) => (
               <Box>
                 <Box direction="row" justify="between">
                   <Box align="center" gap="xsmall" direction="row">
@@ -207,7 +177,7 @@ const PracticeInfo = (props) => {
                       {data.author.name}
                     </Text>
                   </Box>
-                  <Text size="12px">{data.date}</Text>
+                  <Text size="12px">{new Date(data.date).toUTCString()}</Text>
                 </Box>
                 <Text size="14px">{data.comment}</Text>
                 <LikeBtn size="12px" plain />
@@ -227,7 +197,9 @@ const PracticeInfo = (props) => {
                           {res.author.name}
                         </Text>
                       </Box>
-                      <Text size="12px">{res.date}</Text>
+                      <Text size="12px">
+                        {new Date(res.date).toUTCString()}
+                      </Text>
                     </Box>
                     <Text size="14px">{res.comment}</Text>
                     <LikeBtn size="12px" plain />
@@ -252,21 +224,18 @@ const PracticeInfo = (props) => {
         <Box direction="row" gap="xsmall" align="center">
           <Brush size="20px" color="neutral-3" />
           <Text size="22px" color="neutral-3">
-            Practice Name
+            {props.name}
           </Text>
         </Box>
-        <Text size="14px">
-          Practice Description Practice Description Practice Description
-          Practice Description Practice Description Practice Description
-          Practice Description Practice Description Practice Description
-          Practice Description Practice Description Practice Description
-          Practice Description Practice Description Practice Description
-        </Text>
+        <Text size="14px">{props.description}</Text>
         {[
-          { label: "Contribution Type", value: "Contribution Type" },
-          { label: "Authors", value: "Authors" },
-          { label: "Reference", value: "Reference" },
-          { label: "DOI", value: "DOI" },
+          { label: "Contribution Type", value: props.contribution_type },
+          {
+            label: "Authors",
+            value: props.authors.map((a) => a.author_name).join(", "),
+          },
+          { label: "Reference", value: props.reference },
+          { label: "DOI", value: props.doi },
         ].map((data) => (
           <Box>
             <Text size="14px">{data.label}</Text>
@@ -278,14 +247,24 @@ const PracticeInfo = (props) => {
         <Box />
         <Box>
           <Text>Practices Files</Text>
-          <Box direction="row" align="center" gap="xxsmall">
-            <DocumentPdf size="14px" />
-            Filename.pdf
-          </Box>
-          <Box direction="row" align="center" gap="xxsmall">
-            <Image size="14px" />
-            Filename.png
-          </Box>
+          {props.files.map((file) => (
+            <Box
+              direction="row"
+              align="center"
+              gap="xxsmall"
+            >
+              {file.filedata.split(";", 1)[0] === "data:image/png" && (
+                <Image size="14px" />
+              )}
+              {file.filedata.split(";", 1)[0] === "data:image/jpeg" && (
+                <Image size="14px" />
+              )}
+              {file.filedata.split(";", 1)[0] === "data:application/pdf" && (
+                <DocumentPdf size="14px" />
+              )}
+              {file.filename}
+            </Box>
+          ))}
         </Box>
         <Box />
         <Box width="small">
@@ -305,7 +284,33 @@ const PracticeInfo = (props) => {
 
 const ViewPractice = (props) => {
   let location = useLocation();
+  const history = useHistory();
+
   const [showSidebar, setShowSidebar] = useState(true);
+  const [practiceData, setPracticeData] = useState();
+
+  useEffect(() => {
+    (async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const { data } = await api.get("/practices", {
+          params: {
+            practice_id: location.state,
+          },
+          headers: {
+            accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setPracticeData(data);
+      } catch (e) {
+        // setErrors(["Error on token validation, do login"]);
+        setTimeout(() => {
+          history.push("/practices");
+        }, 1000);
+      }
+    })();
+  }, [history, location.state]);
 
   return (
     <Box direction="row">
@@ -313,12 +318,14 @@ const ViewPractice = (props) => {
       <Box fill>
         <Header changeSideBarState={() => setShowSidebar(!showSidebar)} />
         <Box pad="small" fill background="light-3">
-          <CardMinimize
-            pad="small"
-            headerColor="light-1"
-            header="Practice Information"
-            body={<PracticeInfo />}
-          />
+          {practiceData && (
+            <CardMinimize
+              pad="small"
+              headerColor="light-1"
+              header="Practice Information"
+              body={<PracticeInfo {...practiceData} />}
+            />
+          )}
         </Box>
       </Box>
     </Box>
