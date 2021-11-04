@@ -5,7 +5,7 @@ const ConfirmButton = (props) => {
     <Button
       type="submit"
       size="small"
-      style={{ borderRadius: "4px" }}
+      style={{ borderRadius: "4px", ...props.style }}
       primary
       color={props.color}
       label={props.label}

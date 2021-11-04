@@ -1,13 +1,59 @@
 import React, { useState } from "react";
-import { Box, Card, CardBody, CardHeader, CardFooter, Text } from "grommet";
+import {
+  Box,
+  Card,
+  CardBody,
+  CardHeader,
+  CardFooter,
+  Text,
+  RadioButton,
+  Avatar,
+  TextInput,
+} from "grommet";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
 import CardMinimize from "../components/CardMinimize";
-import { Brush, DocumentPdf, Image } from "grommet-icons";
+import { Brush, DocumentPdf, Image, Like, ChatOption } from "grommet-icons";
 import ConfirmButton from "../components/ConfirmButton";
+import { useHistory, useLocation } from "react-router-dom";
 
 const PracticeInfo = (props) => {
   const cardPad = { vertical: "xsmall", horizontal: "small" };
+
+  const LikeBtn = (props) => {
+    const [selected, setSelected] = useState(false);
+
+    return (
+      <Box
+        border={!props.plain || false}
+        round="xxsmall"
+        align="center"
+        width="70px"
+        pad="xsmall"
+      >
+        <RadioButton
+          label={
+            <Text
+              size={props.size || "16px"}
+              color={selected ? "neutral-3" : "dark-2"}
+            >
+              Like
+            </Text>
+          }
+          name="name"
+          value="option 1"
+          onClick={(event) => setSelected(!selected)}
+        >
+          {() => (
+            <Like
+              size={props.size || "14px"}
+              color={selected ? "neutral-3" : "dark-2"}
+            />
+          )}
+        </RadioButton>
+      </Box>
+    );
+  };
 
   const LeftContent = () => {
     return (
@@ -106,6 +152,96 @@ const PracticeInfo = (props) => {
           <Text size="16px">Additional Information Practice</Text>
           <Text size="14px">Information...</Text>
         </Box>
+        <Box
+          direction="row"
+          justify="between"
+          border={[
+            {
+              color: "dark-5",
+              size: "small",
+              style: "solid",
+              side: "bottom",
+            },
+          ]}
+          pad={{ vertical: "small" }}
+        >
+          <LikeBtn />
+          <Box align="center" gap="xsmall" direction="row">
+            <ChatOption size="18px" />
+            Comments (2)
+          </Box>
+        </Box>
+        <Box margin={{ top: "medium" }}>
+          <Text>Comments Recents</Text>
+          <Box pad="small" background="light-3">
+            {[
+              {
+                responses: [
+                  {
+                    author: {
+                      name: "Eliza",
+                      photo: "",
+                    },
+                    comment: "I like it too",
+                    likes: 1,
+                    date: Date.now(),
+                  },
+                ],
+                comment:
+                  "#DOTA2 HERO GUIDES UPDATED TO PATCH 7.30e! 128+ guides have been reviewed and revised Corneta de festaCorneta de festaCorneta de festa",
+                date: "2021/10/10 08:08:08",
+                author: {
+                  name: "MATHEUS PALHETA",
+                  photo:
+                    "https://pbs.twimg.com/profile_images/1440750487850995713/w_C14VpC_400x400.jpg",
+                },
+              },
+            ].map((data) => (
+              <Box>
+                <Box direction="row" justify="between">
+                  <Box align="center" gap="xsmall" direction="row">
+                    {data.author.photo && (
+                      <Avatar size="xsmall" src={data.author.photo} />
+                    )}
+                    <Text weight="bold" size="14px">
+                      {data.author.name}
+                    </Text>
+                  </Box>
+                  <Text size="12px">{data.date}</Text>
+                </Box>
+                <Text size="14px">{data.comment}</Text>
+                <LikeBtn size="12px" plain />
+
+                <Box gap="xsmall" direction="row">
+                  <TextInput reverse placeholder="Response" />
+                  <ConfirmButton color="status-error" label="Send" />
+                </Box>
+                {data.responses.map((res) => (
+                  <Box pad={{ left: "medium", top: "small" }}>
+                    <Box direction="row" justify="between">
+                      <Box align="center" gap="xsmall" direction="row">
+                        {res.author.photo && (
+                          <Avatar size="xsmall" src={res.author.photo} />
+                        )}
+                        <Text weight="bold" size="14px">
+                          {res.author.name}
+                        </Text>
+                      </Box>
+                      <Text size="12px">{res.date}</Text>
+                    </Box>
+                    <Text size="14px">{res.comment}</Text>
+                    <LikeBtn size="12px" plain />
+
+                    <Box gap="xsmall" direction="row">
+                      <TextInput reverse placeholder="Response" />
+                      <ConfirmButton color="status-error" label="Send" />
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+            ))}
+          </Box>
+        </Box>
       </Box>
     );
   };
@@ -168,10 +304,11 @@ const PracticeInfo = (props) => {
 };
 
 const ViewPractice = (props) => {
+  let location = useLocation();
   const [showSidebar, setShowSidebar] = useState(true);
 
   return (
-    <Box fill direction="row">
+    <Box direction="row">
       {showSidebar && <SideBar />}
       <Box fill>
         <Header changeSideBarState={() => setShowSidebar(!showSidebar)} />
