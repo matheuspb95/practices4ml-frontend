@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Box, Text, List, TextInput, FormField } from "grommet";
-import { FormClose } from "grommet-icons";
+import { Box, Text, List, TextInput, FormField, Stack, Tip } from "grommet";
+import { FormClose, Edit } from "grommet-icons";
 import api from "../api";
 
 const AuthorsField = (props) => {
@@ -43,6 +43,7 @@ const AuthorsField = (props) => {
             return a.author_name === evt.suggestion;
           });
           findAuthor.author_name = findAuthor.author_name.split("(")[0];
+          findAuthor.editor = true;
 
           if (findAuthor) {
             setAuthors([...authors, findAuthor]);
@@ -70,24 +71,41 @@ const AuthorsField = (props) => {
               onOrder={setAuthors}
               primaryKey={(item) => {
                 return (
-                  <Box direction="row" align="center">
+                  <Box justify="between" direction="row" align="center">
                     <Text size="14px" color="black">
                       {item.author_name}
                     </Text>
-                    <Box
-                      onClick={() => {
-                        const find = authors.findIndex((a) => a === item);
-                        authors.splice(find, 1);
-                        if (find !== -1) {
+                    <Box align="center" direction="row">
+                      <Box
+                        onClick={() => {
+                          item.editor = !item.editor;
                           setAuthors([...authors]);
-                        }
-                      }}
-                      margin="xsmall"
-                      round
-                      direction="row"
-                      background="black"
-                    >
-                      <FormClose size="18px" color="white" />
+                        }}
+                      >
+                        <Tip content="This author can edit practice?">
+                          <Stack margin={{ top: "xsmall" }} anchor="center">
+                            <Edit size="18px" color="black" />
+                            {!item.editor && (
+                              <FormClose size="24px" color="status-error" />
+                            )}
+                          </Stack>
+                        </Tip>
+                      </Box>
+                      <Box
+                        onClick={() => {
+                          const find = authors.findIndex((a) => a === item);
+                          authors.splice(find, 1);
+                          if (find !== -1) {
+                            setAuthors([...authors]);
+                          }
+                        }}
+                        margin="xsmall"
+                        round
+                        direction="row"
+                        background="black"
+                      >
+                        <FormClose size="18px" color="white" />
+                      </Box>
                     </Box>
                   </Box>
                 );

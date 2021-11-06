@@ -86,6 +86,7 @@ const SideBar = () => {
   return (
     <Sidebar
       style={{
+        minHeight: "100vh",
         minWidth: "250px",
       }}
       background="brand"

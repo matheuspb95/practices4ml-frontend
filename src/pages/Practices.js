@@ -99,7 +99,7 @@ const Practices = (props) => {
   };
 
   return (
-    <Box fill direction="row">
+    <Box direction="row">
       {showSidebar && <SideBar />}
       <Box fill>
         <Header changeSideBarState={() => setShowSidebar(!showSidebar)} />
