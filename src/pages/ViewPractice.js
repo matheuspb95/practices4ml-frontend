@@ -4,15 +4,16 @@ import {
   Card,
   CardBody,
   CardHeader,
-  CardFooter,
   Text,
   RadioButton,
   Avatar,
   TextInput,
+  Form,
 } from "grommet";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
 import CardMinimize from "../components/CardMinimize";
+import AlertModal from "../components/AlertModal";
 import { Brush, DocumentPdf, Image, Like, ChatOption } from "grommet-icons";
 import ConfirmButton from "../components/ConfirmButton";
 import { useHistory, useLocation } from "react-router-dom";
@@ -55,7 +56,9 @@ const PracticeInfo = (props) => {
     );
   };
 
-  const LeftContent = () => {
+  const LeftContent = (props) => {
+    const [comments, setComments] = useState([...props.comments]);
+    console.log(comments);
     return (
       <Box margin="0px" width="large">
         <Box height="70px" fill="horizontal" gap="small" direction="row">
@@ -70,7 +73,7 @@ const PracticeInfo = (props) => {
             },
             {
               label: "Comments",
-              count: props.comments.length,
+              count: props.comments?.length || 0,
             },
           ].map((data) => (
             <Card fill="horizontal" background="light-2">
@@ -160,58 +163,82 @@ const PracticeInfo = (props) => {
           <LikeBtn />
           <Box align="center" gap="xsmall" direction="row">
             <ChatOption size="18px" />
-            Comments ({props.comments.length})
+            Comments ({props.comments?.length || "0"})
           </Box>
         </Box>
         <Box margin={{ top: "medium" }}>
           <Text>Comments Recents</Text>
           <Box pad="small" background="light-3">
-            {props.comments.map((data) => (
-              <Box>
-                <Box direction="row" justify="between">
-                  <Box align="center" gap="xsmall" direction="row">
-                    {data.author.photo && (
-                      <Avatar size="xsmall" src={data.author.photo} />
-                    )}
-                    <Text weight="bold" size="14px">
-                      {data.author.name}
-                    </Text>
-                  </Box>
-                  <Text size="12px">{new Date(data.date).toUTCString()}</Text>
-                </Box>
-                <Text size="14px">{data.comment}</Text>
-                <LikeBtn size="12px" plain />
-
-                <Box gap="xsmall" direction="row">
-                  <TextInput reverse placeholder="Response" />
-                  <ConfirmButton color="status-error" label="Send" />
-                </Box>
-                {data.responses.map((res) => (
-                  <Box pad={{ left: "medium", top: "small" }}>
+            {comments.length > 0 &&
+              comments.reverse().map((data) => {
+                return (
+                  <Box
+                    pad={{ vertical: "xsmall" }}
+                    border={[
+                      {
+                        color: "dark-5",
+                        size: "small",
+                        style: "solid",
+                        side: "bottom",
+                      },
+                    ]}
+                  >
                     <Box direction="row" justify="between">
                       <Box align="center" gap="xsmall" direction="row">
-                        {res.author.photo && (
-                          <Avatar size="xsmall" src={res.author.photo} />
+                        {data.author.photo && (
+                          <Avatar size="xsmall" src={data.author.photo} />
                         )}
                         <Text weight="bold" size="14px">
-                          {res.author.name}
+                          {data.author.name}
                         </Text>
                       </Box>
                       <Text size="12px">
-                        {new Date(res.date).toUTCString()}
+                        {new Date(data.date).toUTCString()}
                       </Text>
                     </Box>
-                    <Text size="14px">{res.comment}</Text>
+                    <Text size="14px">{data.comment}</Text>
                     <LikeBtn size="12px" plain />
-
                     <Box gap="xsmall" direction="row">
                       <TextInput reverse placeholder="Response" />
                       <ConfirmButton color="status-error" label="Send" />
                     </Box>
+                    {data.responses &&
+                      data.responses.map((res) => (
+                        <Box pad={{ left: "medium", top: "small" }}>
+                          <Box direction="row" justify="between">
+                            <Box align="center" gap="xsmall" direction="row">
+                              {res.author.photo && (
+                                <Avatar size="xsmall" src={res.author.photo} />
+                              )}
+                              <Text weight="bold" size="14px">
+                                {res.author.name}
+                              </Text>
+                            </Box>
+                            <Text size="12px">
+                              {new Date(res.date).toUTCString()}
+                            </Text>
+                          </Box>
+                          <Text size="14px">{res.comment}</Text>
+                          <LikeBtn size="12px" plain />
+
+                          <Box gap="xsmall" direction="row">
+                            <TextInput reverse placeholder="Response" />
+                            <ConfirmButton color="status-error" label="Send" />
+                          </Box>
+                        </Box>
+                      ))}
                   </Box>
-                ))}
+                );
+              })}
+          </Box>
+          <Box pad={{ vertical: "small" }}>
+            <Text weight="bold">Add comment</Text>
+            <Form onSubmit={props.submitComment}>
+              <Box gap="xsmall" direction="row">
+                <TextInput name="comment" reverse placeholder="Comment" />
+                <ConfirmButton color="status-error" label="Send" />
               </Box>
-            ))}
+            </Form>
           </Box>
         </Box>
       </Box>
@@ -276,7 +303,7 @@ const PracticeInfo = (props) => {
 
   return (
     <Box pad="0px" gap="small" direction="row" justify="stretch">
-      <LeftContent />
+      <LeftContent {...props} />
       <RightContent />
     </Box>
   );
@@ -288,6 +315,8 @@ const ViewPractice = (props) => {
 
   const [showSidebar, setShowSidebar] = useState(true);
   const [practiceData, setPracticeData] = useState();
+  const [errors, setErrors] = useState([]);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -304,13 +333,36 @@ const ViewPractice = (props) => {
         });
         setPracticeData(data);
       } catch (e) {
-        // setErrors(["Error on token validation, do login"]);
+        setErrors(["Error on token validation, do login"]);
         setTimeout(() => {
           history.push("/practices");
         }, 1000);
       }
     })();
   }, [history, location.state]);
+
+  const submitComment = ({ value }) => {
+    (async () => {
+      try {
+        const token = localStorage.getItem("token");
+        await api.post("/practices/comment", value, {
+          headers: {
+            accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            practice_id: location.state,
+          },
+        });
+        setSuccess(true);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } catch (e) {
+        setErrors(["Error on send comment, try again later"]);
+      }
+    })();
+  };
 
   return (
     <Box direction="row">
@@ -323,11 +375,19 @@ const ViewPractice = (props) => {
               pad="small"
               headerColor="light-1"
               header="Practice Information"
-              body={<PracticeInfo {...practiceData} />}
+              body={
+                <PracticeInfo submitComment={submitComment} {...practiceData} />
+              }
             />
           )}
         </Box>
       </Box>
+      <AlertModal
+        errors={errors}
+        setErrors={setErrors}
+        success={success}
+        successText="PRACTICE SAVED"
+      />
     </Box>
   );
 };
