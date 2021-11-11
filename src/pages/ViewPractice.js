@@ -43,7 +43,12 @@ const PracticeInfo = (props) => {
           }
           name="name"
           value="option 1"
-          onClick={(event) => setSelected(!selected)}
+          onClick={(event) => {
+            if (!selected) {
+              setSelected(true);
+              props.like();
+            }
+          }}
         >
           {() => (
             <Like
@@ -57,26 +62,24 @@ const PracticeInfo = (props) => {
   };
 
   const LeftContent = (props) => {
-    const [comments, setComments] = useState([...props.comments]);
-    console.log(comments);
     return (
       <Box margin="0px" width="large">
         <Box height="70px" fill="horizontal" gap="small" direction="row">
           {[
             {
               label: "Likes",
-              count: props.likes,
+              count: props.likes || 0,
             },
             {
               label: "Views",
-              count: props.views,
+              count: props.views || 0,
             },
             {
               label: "Comments",
               count: props.comments?.length || 0,
             },
           ].map((data) => (
-            <Card fill="horizontal" background="light-2">
+            <Card key={data.label} fill="horizontal" background="light-2">
               <CardHeader pad={cardPad}>{data.label}</CardHeader>
               <CardBody pad={cardPad}>
                 <Text weight="bold">{data.count}</Text>
@@ -160,7 +163,11 @@ const PracticeInfo = (props) => {
           ]}
           pad={{ vertical: "small" }}
         >
-          <LikeBtn />
+          <LikeBtn
+            like={() => {
+              props.likePractice();
+            }}
+          />
           <Box align="center" gap="xsmall" direction="row">
             <ChatOption size="18px" />
             Comments ({props.comments?.length || "0"})
@@ -169,10 +176,11 @@ const PracticeInfo = (props) => {
         <Box margin={{ top: "medium" }}>
           <Text>Comments Recents</Text>
           <Box pad="small" background="light-3">
-            {comments.length > 0 &&
-              comments.reverse().map((data) => {
+            {props.comments &&
+              props.comments.reverse().map((data, index) => {
                 return (
                   <Box
+                    key={index}
                     pad={{ vertical: "xsmall" }}
                     border={[
                       {
@@ -197,14 +205,26 @@ const PracticeInfo = (props) => {
                       </Text>
                     </Box>
                     <Text size="14px">{data.comment}</Text>
-                    <LikeBtn size="12px" plain />
-                    <Box gap="xsmall" direction="row">
-                      <TextInput reverse placeholder="Response" />
-                      <ConfirmButton color="status-error" label="Send" />
-                    </Box>
+                    <LikeBtn
+                      size="12px"
+                      plain
+                      like={() => {
+                        props.likeComment(index);
+                      }}
+                    />
+                    <Form onSubmit={(evt) => props.submitComment(evt, index)}>
+                      <Box gap="xsmall" direction="row">
+                        <TextInput
+                          name="comment"
+                          reverse
+                          placeholder="Response"
+                        />
+                        <ConfirmButton color="status-error" label="Send" />
+                      </Box>
+                    </Form>
                     {data.responses &&
-                      data.responses.map((res) => (
-                        <Box pad={{ left: "medium", top: "small" }}>
+                      data.responses.map((res, i) => (
+                        <Box key={i} pad={{ left: "medium", top: "small" }}>
                           <Box direction="row" justify="between">
                             <Box align="center" gap="xsmall" direction="row">
                               {res.author.photo && (
@@ -219,12 +239,13 @@ const PracticeInfo = (props) => {
                             </Text>
                           </Box>
                           <Text size="14px">{res.comment}</Text>
-                          <LikeBtn size="12px" plain />
-
-                          <Box gap="xsmall" direction="row">
-                            <TextInput reverse placeholder="Response" />
-                            <ConfirmButton color="status-error" label="Send" />
-                          </Box>
+                          <LikeBtn
+                            like={() => {
+                              props.likeResponse(index, i);
+                            }}
+                            size="12px"
+                            plain
+                          />
                         </Box>
                       ))}
                   </Box>
@@ -263,8 +284,8 @@ const PracticeInfo = (props) => {
           },
           { label: "Reference", value: props.reference },
           { label: "DOI", value: props.doi },
-        ].map((data) => (
-          <Box>
+        ].map((data, i) => (
+          <Box key={data.value + i}>
             <Text size="14px">{data.label}</Text>
             <Text weight="bold" size="14px">
               {data.value}
@@ -274,8 +295,8 @@ const PracticeInfo = (props) => {
         <Box />
         <Box>
           <Text>Practices Files</Text>
-          {props.files.map((file) => (
-            <a href={file.filedata} download={file.filename}>
+          {props.files.map((file, i) => (
+            <a key={i} href={file.filedata} download={file.filename}>
               <Box direction="row" align="center" gap="xxsmall">
                 {file.filedata.split(";", 1)[0] === "data:image/png" && (
                   <Image size="14px" />
@@ -341,7 +362,79 @@ const ViewPractice = (props) => {
     })();
   }, [history, location.state]);
 
-  const submitComment = ({ value }) => {
+  const likePractice = () => {
+    (async () => {
+      try {
+        const token = localStorage.getItem("token");
+        await api.put(
+          "/practices/like",
+          {},
+          {
+            headers: {
+              accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              practice_id: location.state,
+            },
+          }
+        );
+      } catch (e) {
+        setErrors(["Error on like, try again later"]);
+      }
+    })();
+  };
+
+  const likeComment = (comment_id) => {
+    (async () => {
+      try {
+        const token = localStorage.getItem("token");
+        await api.put(
+          "/practices/like",
+          {},
+          {
+            headers: {
+              accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              practice_id: location.state,
+              comment_id: comment_id,
+            },
+          }
+        );
+      } catch (e) {
+        setErrors(["Error on like, try again later"]);
+      }
+    })();
+  };
+
+  const likeResponse = (comment_id, response_id) => {
+    (async () => {
+      try {
+        const token = localStorage.getItem("token");
+        await api.put(
+          "/practices/like",
+          {},
+          {
+            headers: {
+              accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              practice_id: location.state,
+              comment_id: comment_id,
+              response_id: response_id,
+            },
+          }
+        );
+      } catch (e) {
+        setErrors(["Error on like, try again later"]);
+      }
+    })();
+  };
+
+  const submitComment = ({ value }, comment_id) => {
     (async () => {
       try {
         const token = localStorage.getItem("token");
@@ -350,9 +443,14 @@ const ViewPractice = (props) => {
             accept: "application/json",
             Authorization: `Bearer ${token}`,
           },
-          params: {
-            practice_id: location.state,
-          },
+          params: comment_id
+            ? {
+                practice_id: location.state,
+                comment_id: comment_id,
+              }
+            : {
+                practice_id: location.state,
+              },
         });
         setSuccess(true);
         setTimeout(() => {
@@ -376,7 +474,13 @@ const ViewPractice = (props) => {
               headerColor="light-1"
               header="Practice Information"
               body={
-                <PracticeInfo submitComment={submitComment} {...practiceData} />
+                <PracticeInfo
+                  likePractice={likePractice}
+                  likeComment={likeComment}
+                  likeResponse={likeResponse}
+                  submitComment={submitComment}
+                  {...practiceData}
+                />
               }
             />
           )}
