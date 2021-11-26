@@ -9,12 +9,12 @@ import {
   Footer,
   TextInput,
 } from "grommet";
-import { Edit, Folder, Search } from "grommet-icons";
+import { Edit, Folder, Search, UserManager } from "grommet-icons";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
 import AlertModal from "../components/AlertModal";
 import api from "../api";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 const nameField = (props) => {
   return (
@@ -34,11 +34,15 @@ const nameField = (props) => {
 const authorsField = (props) => {
   return (
     <Box justify="center" direction="row">
-      {props.authors.map((author) => {
+      {props.authors.map((author, i) => {
         return (
           <Box round="full" alignSelf="center" pad="xxsmall">
-            <Avatar background="accent-1" size="medium" src={author.photo}>
-              {author.author_name.split(" ").map((n) => n[0])}
+            <Avatar
+              background={"accent-".concat(1 + (i % 4))}
+              size="medium"
+              src={author.photo}
+            >
+              <UserManager size="medium" />
             </Avatar>
           </Box>
         );
@@ -64,15 +68,19 @@ const Practices = (props) => {
   const [search, setSearch] = useState("");
   const [errors, setErrors] = useState([]);
   const history = useHistory();
+  let location = useLocation();
 
   useEffect(() => {
     (async () => {
       const token = localStorage.getItem("token");
       try {
+        const params = location.state
+          ? {
+              author_id: location.state.author_id,
+            }
+          : {};
         const { data } = await api.get("/practices", {
-          params: {
-            limit: 0,
-          },
+          params: params,
           headers: {
             accept: "application/json",
             Authorization: `Bearer ${token}`,
@@ -90,7 +98,7 @@ const Practices = (props) => {
         }, 1000);
       }
     })();
-  }, [history]);
+  }, [history, location.state]);
 
   const headerProps = {
     color: "black",
@@ -104,7 +112,7 @@ const Practices = (props) => {
       <Box fill>
         <Header changeSideBarState={() => setShowSidebar(!showSidebar)} />
         <Box pad="small" fill background="light-3">
-          <Text size="22px">All SE Practices</Text>
+          <Text size="22px">{location.state ? 'Member practices' : 'All SE Practices'}</Text>
           <Box background="light-1">
             <Box margin="small">
               <Text margin={{ vertical: "xsmall" }} size="16px">

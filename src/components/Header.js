@@ -35,7 +35,10 @@ const Header = (props) => {
           label="Practices"
           onClick={() => history.push("/practices")}
         />
-        <HeaderButton label="Members" />
+        <HeaderButton
+          label="Members"
+          onClick={() => history.push("/members")}
+        />
         <HeaderButton label="About" />
       </Box>
       <Box direction="row">
