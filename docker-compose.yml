@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  forestry-portal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: practices4ml
+    user: root
+    ports:
+      - 7779:7779
+    
+    restart: on-failure

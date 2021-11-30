@@ -112,7 +112,9 @@ const Practices = (props) => {
       <Box fill>
         <Header changeSideBarState={() => setShowSidebar(!showSidebar)} />
         <Box pad="small" fill background="light-3">
-          <Text size="22px">{location.state ? 'Member practices' : 'All SE Practices'}</Text>
+          <Text size="22px">
+            {location.state ? "Member practices" : "All SE Practices"}
+          </Text>
           <Box background="light-1">
             <Box margin="small">
               <Text margin={{ vertical: "xsmall" }} size="16px">
@@ -129,7 +131,7 @@ const Practices = (props) => {
               />
             </Box>
             <Box>
-              {listData.length > 0 && (
+              {listData.length > 0 ? (
                 <DataTable
                   margin={{ top: "small" }}
                   background={{
@@ -213,6 +215,10 @@ const Practices = (props) => {
                     )
                     .slice((page - 1) * 5, page * 5)}
                 />
+              ) : (
+                <Box align="center">
+                  <Text>No practices found</Text>
+                </Box>
               )}
             </Box>
           </Box>

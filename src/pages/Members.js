@@ -131,19 +131,39 @@ const Members = (props) => {
                       </CardBody>
                       <CardFooter
                         background="light-3"
-                        justify="end"
+                        justify={member.id ? "end" : "center"}
                         pad="small"
                       >
-                        <ConfirmButton color="neutral-3" label="Follow" />
-                        <ConfirmButton
-                          color="accent-3"
-                          label="View practices"
-                          onClick={() => {
-                            history.push("/practices", {
-                              author_id: member.id,
-                            });
-                          }}
-                        />
+                        {member.id ? (
+                          <>
+                            <ConfirmButton color="neutral-3" label="Follow" />
+                            <Box pad="xsmall" />
+                            <ConfirmButton
+                              style={{
+                                borderRadius: "4px",
+                                height: "32px",
+                                maxWidth: "120px",
+                                padding: "5px",
+                              }}
+                              color="accent-3"
+                              label="View practices"
+                              onClick={() => {
+                                history.push("/practices", {
+                                  author_id: member.id,
+                                });
+                              }}
+                            />
+                          </>
+                        ) : (
+                          <Box align="center">
+                            <Text size="14px" color="dark-3">
+                              This author has no register.
+                            </Text>
+                            <Text size="12px" color="dark-4">
+                              Ask they to register and add as author.
+                            </Text>
+                          </Box>
+                        )}
                       </CardFooter>
                     </Card>
                   );
