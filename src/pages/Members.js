@@ -15,6 +15,7 @@ import { Search, UserManager, Organization, Mail } from "grommet-icons";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
 import ConfirmButton from "../components/ConfirmButton";
+import AlertModal from "../components/AlertModal";
 import api from "../api";
 import { useHistory, useLocation } from "react-router-dom";
 
@@ -136,7 +137,7 @@ const Members = (props) => {
                       >
                         {member.id ? (
                           <>
-                            <ConfirmButton color="neutral-3" label="Follow" />
+                            {/* <ConfirmButton color="neutral-3" label="Follow" /> */}
                             <Box pad="xsmall" />
                             <ConfirmButton
                               style={{
@@ -186,6 +187,7 @@ const Members = (props) => {
           </Footer>
         </Box>
       </Box>
+      <AlertModal errors={errors} setErrors={setErrors} />
     </Box>
   );
 };

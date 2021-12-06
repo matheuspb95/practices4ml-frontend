@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, Box, Sidebar, Nav, Text, TextInput } from "grommet";
 import {
   Search,
-  User,
+  UserManager,
   Apps,
   FormPrevious,
   FormDown,
   Radial,
 } from "grommet-icons";
 import { useHistory } from "react-router-dom";
+import api from "../api";
 
 const SideBarButton = (props) => {
   return (
@@ -19,14 +20,15 @@ const SideBarButton = (props) => {
       align="center"
       gap="small"
     >
-      <Avatar
-        pad="small"
+      <Box
+        round
+        pad="xsmall"
         style={{ minWidth: "32px" }}
         size="32px"
         background="light-2"
       >
         {props.children}
-      </Avatar>
+      </Box>
       <Text weight="lighter">{props.label}</Text>
     </Box>
   );
@@ -83,6 +85,25 @@ const SearchBar = (props) => {
 
 const SideBar = () => {
   const history = useHistory();
+  const [userData, setUserData] = useState({});
+
+  useEffect(() => {
+    (async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const { data } = await api.get("/users/me", {
+          headers: {
+            accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUserData(data);
+      } catch (e) {
+        history.push("login");
+      }
+    })();
+  }, [history]);
+
   return (
     <Sidebar
       style={{
@@ -101,9 +122,15 @@ const SideBar = () => {
         <Box border="bottom" />
         <SideBarButton
           onClick={() => history.push("/profile")}
-          label="User Name"
+          label={userData.name}
         >
-          <User color="dark-1" />
+          <Avatar
+            background="accent-2"
+            size="small"
+            src={userData.photo}
+          >
+            <UserManager size="small" />
+          </Avatar>
         </SideBarButton>
         <Box border="bottom" />
         <SearchBar />

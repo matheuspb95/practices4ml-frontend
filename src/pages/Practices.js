@@ -238,7 +238,7 @@ const Practices = (props) => {
           />
         </Footer>
       </Box>
-      <AlertModal errors={errors} />
+      <AlertModal errors={errors} setErrors={setErrors} />
     </Box>
   );
 };

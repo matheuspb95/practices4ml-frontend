@@ -10,19 +10,20 @@ import AddPractice from "../pages/AddPractice";
 import Practices from "../pages/Practices";
 import ViewPractice from '../pages/ViewPractice';
 import Members from "../pages/Members";
+import Notifications from "../pages/Notifications";
 
 
 const Routes = () => {
   return (
     <Router>
       <Switch>
-        <Route path="/" exact>
+        <Route path="/home" exact>
           <Home />
         </Route>
         <Route path="/register" exact>
           <Register />
         </Route>
-        <Route path="/login" exact>
+        <Route path="/" exact>
           <Login />
         </Route>
         <Route path="/profile" exact>
@@ -42,6 +43,9 @@ const Routes = () => {
         </Route>
         <Route path="/members" exact>
           <Members />
+        </Route>
+        <Route path="/notifications" exact>
+          <Notifications />
         </Route>
       </Switch>
     </Router>

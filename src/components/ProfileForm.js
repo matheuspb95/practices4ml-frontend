@@ -111,7 +111,7 @@ const ProfileForm = (props) => {
         direction="row"
       >
         <ConfirmButton color="#007bff" label="About Me" />
-        <Button color="dark-3" label="Settings" plain />
+        {/* <Button color="dark-3" label="Settings" plain /> */}
       </CardHeader>
       <CardBody
         pad="small"

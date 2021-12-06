@@ -66,9 +66,9 @@ const Profile = () => {
             )}
           </Box>
         </Box>
-        <Footer pad="small">
+        {/* <Footer pad="small">
           Copyright © 2014-2021 AdminLTE.io. All rights reserved.
-        </Footer>
+        </Footer> */}
       </Box>
       {errors.length > 0 && (
         <Layer onEsc={() => setErrors([])} onClickOutside={() => setErrors([])}>

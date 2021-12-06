@@ -71,7 +71,7 @@ const ProfileCard = (props) => {
             </Box>
           </Box>
         </CardHeader>
-        <CardBody pad={{ left: "small", right: "small", bottom: "small" }}>
+        {/* <CardBody pad={{ left: "small", right: "small", bottom: "small" }}>
           <Box
             pad={{ vertical: "small" }}
             direction="row"
@@ -110,7 +110,7 @@ const ProfileCard = (props) => {
               89
             </Text>
           </Box>
-        </CardBody>
+        </CardBody> */}
       </Card>
       {showUpload && (
         <Layer
