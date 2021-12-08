@@ -5,6 +5,7 @@ import { User, MailOption, Lock } from "grommet-icons";
 import api from "../api";
 import FormCard from "../components/FormCard";
 import Link from "../components/Link";
+import TermsConditions from "../components/TermsConditions";
 
 const fields = [
   {
@@ -49,6 +50,7 @@ const Register = () => {
 
   const [errors, setErrors] = useState([]);
   const [success, setSuccess] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
 
   const submit = async ({ value }) => {
     fields.forEach((field) => {
@@ -93,7 +95,9 @@ const Register = () => {
             ref: refAgree,
             child: (
               <Text size="20" weight="bold">
-                I agree to the <Link label="terms" />
+                I agree to the{" "}
+                <Link click={() => setShowTerms(true)} label="terms" />
+                {showTerms && <TermsConditions setShowTerms={setShowTerms} />}
               </Text>
             ),
           },

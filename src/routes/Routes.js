@@ -11,6 +11,7 @@ import Practices from "../pages/Practices";
 import ViewPractice from '../pages/ViewPractice';
 import Members from "../pages/Members";
 import Notifications from "../pages/Notifications";
+import About from '../pages/About';
 
 
 const Routes = () => {
@@ -24,6 +25,9 @@ const Routes = () => {
           <Register />
         </Route>
         <Route path="/" exact>
+          <Login />
+        </Route>
+        <Route path="/login" exact>
           <Login />
         </Route>
         <Route path="/profile" exact>
@@ -46,6 +50,9 @@ const Routes = () => {
         </Route>
         <Route path="/notifications" exact>
           <Notifications />
+        </Route>
+        <Route path="/about" exact>
+          <About />
         </Route>
       </Switch>
     </Router>

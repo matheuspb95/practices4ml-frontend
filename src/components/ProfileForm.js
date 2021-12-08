@@ -5,7 +5,6 @@ import {
   Card,
   CardHeader,
   CardBody,
-  Button,
   Form,
   FormField,
   CheckBoxGroup,
@@ -16,8 +15,7 @@ import ConfirmButton from "../components/ConfirmButton";
 import InputField from "../components/InputField";
 import Link from "../components/Link";
 import SelectField from "../components/SelectField";
-import api from "../api";
-import { useHistory } from "react-router-dom";
+import TermsConditions from "./TermsConditions";
 
 const degreeOpt = [
   { label: "Student", value: "student" },
@@ -44,46 +42,21 @@ const areaOpt = [
 ];
 
 const ProfileForm = (props) => {
-  const history = useHistory();
-
-  const submitData = async ({ value }) => {
-    if (value.areas) value.areas = value.areas.map((v) => v.value);
-    if (value.degree) value.degree = value.degree.value;
-
-    const form = { ...props.userData, ...value };
-    const token = localStorage.getItem("token");
-
-    try {
-      await api.put("/users", form, {
-        headers: {
-          accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      props.setSuccess(true);
-      setTimeout(() => {
-        props.setSuccess(false);
-        history.push("/")
-      }, 500);
-    } catch (e) {
-      console.log(e);
-      props.setErrors(["Error on update user"]);
-    }
-  };
+  const [showTerms, setShowTerms] = useState(false);
 
   const WorkCheckbox = () => {
     const [value, setValue] = useState(props.userData.work);
     return (
       <CheckBoxGroup
         value={value}
-        onChange={({value}) => setValue(value)}
+        onChange={({ value }) => setValue(value)}
         name="work"
         direction="row"
         options={[
           { label: "Academic", value: "academic" },
           {
             label: "Industry Software (Startup/ Small /Large Company)",
-            value: "industry"
+            value: "industry",
           },
         ]}
       />
@@ -119,7 +92,7 @@ const ProfileForm = (props) => {
         justify="start"
         direction="row"
       >
-        <Form onSubmit={submitData}>
+        <Form onSubmit={props.submitData}>
           <InputField
             defaultValue={props.userData.name}
             name="name"
@@ -184,16 +157,21 @@ const ProfileForm = (props) => {
             info="You can add more than one interest area. It is a required field"
           />
           <Box gap="medium" margin={{ left: "156px" }}>
-            <Box align="center" gap="xsmall" direction="row">
+            {/* <Box align="center" gap="xsmall" direction="row">
               <CheckBox name="reviewer" />
               <Text size="20" weight="bold">
                 Do you want to be a reviewer? <Link label="see more" />
               </Text>
-            </Box>
+            </Box> */}
             <Box align="center" gap="xsmall" direction="row">
               <CheckBox name="agree" />
               <Text size="20" weight="bold">
-                I agree with the <Link label="terms and conditions" />
+                I agree with the{" "}
+                <Link
+                  click={() => setShowTerms(true)}
+                  label="terms and conditions"
+                />
+                {showTerms && <TermsConditions setShowTerms={setShowTerms} />}
               </Text>
             </Box>
             <Box width="xsmall" margin={{ vertical: "small" }}>

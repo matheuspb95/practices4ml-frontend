@@ -4,7 +4,6 @@ import {
   Text,
   Card,
   CardHeader,
-  CardBody,
   Avatar,
   Button,
   Layer,
@@ -50,7 +49,7 @@ const ProfileCard = (props) => {
               border={{ color: "dark-4", size: "small" }}
               pad="xxsmall"
             >
-              <Avatar size="xlarge" src={props.userData.photo} />
+              <Avatar size="xlarge" src={props.photoData?.photo} />
             </Box>
             <Box gap="small" pad="xsmall">
               <Button
@@ -132,7 +131,7 @@ const ProfileCard = (props) => {
                   ) {
                     const reader = new FileReader();
                     reader.onloadend = () => {
-                      props.setUserData({ photo: reader.result });
+                      props.setPhotoData({ photo: reader.result });
                       setShowUpload(false);
                     };
                     reader.readAsDataURL(file);

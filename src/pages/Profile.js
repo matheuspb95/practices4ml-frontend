@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Text,
-  Button,
-  Footer,
-  Layer,
-  Heading,
-} from "grommet";
+import { Box, Text, Button, Layer, Heading } from "grommet";
 import { useHistory } from "react-router-dom";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
@@ -17,6 +10,7 @@ import api from "../api";
 const Profile = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [userData, setUserData] = useState();
+  const [photoData, setPhotoData] = useState();
   const [errors, setErrors] = useState([]);
   const [success, setSuccess] = useState(false);
   const history = useHistory();
@@ -32,11 +26,37 @@ const Profile = () => {
           },
         });
         setUserData(data);
+        setPhotoData({ photo: data.photo });
       } catch (e) {
         history.push("login");
       }
     })();
   }, [history]);
+
+  const submitData = async ({ value }) => {
+    if (value.areas) value.areas = value.areas.map((v) => v.value);
+    if (value.degree) value.degree = value.degree.value;
+
+    const form = { ...userData, ...value, ...photoData };
+    const token = localStorage.getItem("token");
+
+    try {
+      await api.put("/users", form, {
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+        history.push("/");
+      }, 500);
+    } catch (e) {
+      console.log(e);
+      setErrors(["Error on update user"]);
+    }
+  };
 
   return (
     <Box direction="row">
@@ -46,13 +66,12 @@ const Profile = () => {
         <Box pad="small" fill background="light-3">
           <Text size="30px">Profile</Text>
           <Box direction="row">
-            {userData && (
+            {userData && photoData && (
               <>
                 <ProfileCard
                   userData={userData}
-                  setUserData={(change) => {
-                    setUserData({ ...userData, ...change });
-                  }}
+                  photoData={photoData}
+                  setPhotoData={setPhotoData}
                 />
                 <ProfileForm
                   setSuccess={setSuccess}
@@ -61,6 +80,7 @@ const Profile = () => {
                   setUserData={(change) => {
                     setUserData({ ...userData, ...change });
                   }}
+                  submitData={submitData}
                 />
               </>
             )}

@@ -28,6 +28,7 @@ const areasOpt = [
   { value: "Models and Methods", label: "Models and Methods" },
   { value: "Software Quality", label: "Software Quality" },
   { value: "Professional Practice", label: "Professional Practice" },
+  { value: "Deployment", label: "Deployment" },
 ];
 
 const CheckBoxGroupField = (props) => {

@@ -28,6 +28,11 @@ const PieChart = ({ data, max }) => {
     "status-error",
     "status-warning",
     "status-ok",
+    "brand",
+    "#654321",
+    "#987654",
+    "#135790",
+    "#aaff44",
   ];
   const [dropValue, setDropValue] = useState(0);
   const [dropLabel, setDropLabel] = useState("");
@@ -112,7 +117,7 @@ const LabelChart = ({ data, max }) => {
         </Box>
         <Box pad={{ left: "medium" }} direction="row">
           {data.map((v) => (
-            <Box flex={false} basis="xxsmall" align="end" gap="medium">
+            <Box flex={false} basis="45px" align="end" gap="medium">
               <Chart
                 bounds={[
                   [0, 2],
@@ -239,11 +244,11 @@ const Home = (props) => {
             gap="medium"
           >
             <CardMinimize
-              header="Most Viewed"
+              header="Most Viewed (by areas)"
               body={<LabelChart data={areasViews} max={maxValue(areasViews)} />}
             />
             <CardMinimize
-              header="Most Commented"
+              header="Most Commented (by areas)"
               body={
                 <LabelChart
                   data={areascomments}
@@ -252,10 +257,36 @@ const Home = (props) => {
               }
             />
             <CardMinimize
-              header="Most Liked"
+              header="Most Liked (by areas)"
               body={<PieChart data={areasLikes} max={maxValue(areasLikes)} />}
             />
-            <CardMinimize header="Search terms used" />
+            <CardMinimize
+              header="Most Liked (by challenges)"
+              body={
+                <PieChart
+                  data={challengesLikes}
+                  max={maxValue(challengesLikes)}
+                />
+              }
+            />
+            <CardMinimize
+              header="Most Commented (by challenges)"
+              body={
+                <PieChart
+                  data={challengescomments}
+                  max={maxValue(challengescomments)}
+                />
+              }
+            />
+            <CardMinimize
+              header="Most viewed (by challenges)"
+              body={
+                <PieChart
+                  data={challengesViews}
+                  max={maxValue(challengesViews)}
+                />
+              }
+            />
           </Grid>
         </Box>
       </Box>

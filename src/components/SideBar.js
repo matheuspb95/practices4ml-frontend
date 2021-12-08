@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Avatar, Box, Sidebar, Nav, Text, TextInput } from "grommet";
+import { Avatar, Box, Sidebar, Nav, Text } from "grommet";
 import {
-  Search,
   UserManager,
   Apps,
   FormPrevious,
@@ -20,15 +19,7 @@ const SideBarButton = (props) => {
       align="center"
       gap="small"
     >
-      <Box
-        round
-        pad="xsmall"
-        style={{ minWidth: "32px" }}
-        size="32px"
-        background="light-2"
-      >
-        {props.children}
-      </Box>
+      {props.children}
       <Text weight="lighter">{props.label}</Text>
     </Box>
   );
@@ -79,9 +70,9 @@ const DropDownMenu = (props) => {
   );
 };
 
-const SearchBar = (props) => {
-  return <TextInput icon={<Search />} reverse placeholder="Search" />;
-};
+// const SearchBar = (props) => {
+//   return <TextInput icon={<Search />} reverse placeholder="Search" />;
+// };
 
 const SideBar = () => {
   const history = useHistory();
@@ -115,25 +106,37 @@ const SideBar = () => {
     >
       <Nav gap="small" width="250px">
         <SideBarButton label="SEPractices4ML">
-          <Text size="20px" weight="bolder" color="dark-2">
-            SE
-          </Text>
+          <Box
+            pad="xsmall"
+            round
+            background="light-1"
+            justify="center"
+            align="center"
+          >
+            <Text size="30px" weight="bolder" color="dark-2">
+              SE
+            </Text>
+          </Box>
         </SideBarButton>
         <Box border="bottom" />
         <SideBarButton
           onClick={() => history.push("/profile")}
           label={userData.name}
         >
-          <Avatar
-            background="accent-2"
-            size="small"
-            src={userData.photo}
+          <Box
+            pad="2px"
+            round
+            background="light-1"
+            justify="center"
+            align="center"
           >
-            <UserManager size="small" />
-          </Avatar>
+            <Avatar background="accent-1" size="40px" src={userData.photo}>
+              <UserManager size="small" />
+            </Avatar>
+          </Box>
         </SideBarButton>
         <Box border="bottom" />
-        <SearchBar />
+        {/* <SearchBar /> */}
         <DropDownMenu
           label="My Practices"
           options={[

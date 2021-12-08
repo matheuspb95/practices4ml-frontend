@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Text, List } from "grommet";
 import Header from "../components/Header";
 import SideBar from "../components/SideBar";
+import AlertModal from "../components/AlertModal";
 import api from "../api";
 import { useHistory } from "react-router-dom";
 
@@ -31,6 +32,27 @@ const Home = (props) => {
     })();
   }, [history]);
 
+  const clickNotif = ({ item }) => {
+    (async () => {
+      const token = localStorage.getItem("token");
+      try {
+        api.get("/users/view-notification", {
+          headers: {
+            accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          params: { notif_id: item["_id"] },
+        });
+        history.push("/view-practice", item.practice_id);
+      } catch (e) {
+        setErrors(["Error on token validation, do login"]);
+        setTimeout(() => {
+          history.push("/login");
+        }, 1000);
+      }
+    })();
+  };
+
   return (
     <Box direction="row">
       {showSidebar && <SideBar />}
@@ -45,14 +67,26 @@ const Home = (props) => {
               margin={{ vertical: "medium" }}
               data={notifications}
               primaryKey="text"
-              secondaryKey={(notif) => new Date(notif.date).toUTCString()}
-              onClickItem={({ item }) => {
-                history.push("/view-practice", item.practice_id);
-              }}
+              secondaryKey={(notif) => (
+                <Box align="center" direction="row">
+                  {!notif.read && (
+                    <Box
+                      margin={{ right: "small" }}
+                      width="10px"
+                      height="10px"
+                      background="status-critical"
+                      round
+                    />
+                  )}
+                  <Text>{new Date(notif.date).toUTCString()}</Text>
+                </Box>
+              )}
+              onClickItem={clickNotif}
             />
           </Box>
         </Box>
       </Box>
+      <AlertModal errors={errors} setErrors={setErrors} />
     </Box>
   );
 };

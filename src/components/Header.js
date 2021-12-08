@@ -2,15 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { Header as GrHeader, Button, Box, Stack, Text, Drop } from "grommet";
 import {
   Menu,
-  Search,
   Notification,
-  Expand,
   Like,
   Chat,
   Document,
 } from "grommet-icons";
 import { useHistory } from "react-router-dom";
 import api from "../api";
+import AlertModal from "./AlertModal";
 
 const HeaderButton = (props) => {
   let Icon;
@@ -67,6 +66,27 @@ const Header = (props) => {
     })();
   }, [history]);
 
+  const clickNotif = (item) => {
+    (async () => {
+      const token = localStorage.getItem("token");
+      try {
+        api.get("/users/view-notification", {
+          headers: {
+            accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          params: { notif_id: item["_id"] },
+        });
+        history.push("/view-practice", item.practice_id);
+      } catch (e) {
+        setErrors(["Error on token validation, do login"]);
+        setTimeout(() => {
+          history.push("/login");
+        }, 1000);
+      }
+    })();
+  };
+
   return (
     <GrHeader pad="xsmall" color="white">
       <Box gap="medium" justify="start" direction="row">
@@ -85,10 +105,10 @@ const Header = (props) => {
           label="Members"
           onClick={() => history.push("/members")}
         />
-        <HeaderButton label="About" />
+        <HeaderButton label="About" onClick={() => history.push("/about")} />
       </Box>
       <Box direction="row" ref={notifRef}>
-        <HeaderButton icon={Search} />
+        {/* <HeaderButton icon={Search} /> */}
         <HeaderButton
           icon={Notification}
           counter={notifications.filter((not) => !not.read).length}
@@ -115,9 +135,7 @@ const Header = (props) => {
                 .map((notif) => {
                   return (
                     <Box
-                      onClick={() => {
-                        history.push("/view-practice", notif.practice_id);
-                      }}
+                      onClick={() => clickNotif(notif)}
                       width="medium"
                       gap="xxsmall"
                       pad="xsmall"
@@ -148,7 +166,8 @@ const Header = (props) => {
             </Box>
           </Drop>
         )}
-        <HeaderButton icon={Expand} />
+        {/* <HeaderButton icon={Expand} /> */}
+        <AlertModal errors={errors} setErrors={setErrors} />
       </Box>
     </GrHeader>
   );
