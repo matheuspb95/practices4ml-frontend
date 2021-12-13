@@ -113,7 +113,7 @@ const AddPractice = () => {
                     color="dark-3"
                     label="Cancel"
                     onClick={() => {
-                      setStep(1);
+                      history.push("/practices");
                     }}
                   />
                   <ConfirmButton color="neutral-1" label="Next" type="submit" />

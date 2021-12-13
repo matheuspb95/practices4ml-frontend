@@ -24,6 +24,8 @@ const contributionOpt = [
 
 
 const OrganizationForm = (props) => {
+  props.data.data_source = props.data.data_source?.label;
+  props.data.contribution_type = props.data.contribution_type?.label;
   return (
     <Box margin={{ vertical: "small" }}>
       <SelectField

@@ -72,7 +72,6 @@ const Login = () => {
     if (errors.length === 0) {
       try {
         signIn(value);
-        setSuccess(true);
       } catch (e) {
         errors.push("Network Error", e);
       }
